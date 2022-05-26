@@ -1,0 +1,31 @@
+{% extends 'main.html' %}
+<!-- Dropzone -->
+{% block imports %}
+<script src="/static/js/dropzone.min.js"></script>
+<link rel="stylesheet" href="static/css/dropzone.min.css" type="text/css" />
+{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('upload_.upload') }}" class="dropzone" id="dropzone" method="POST" enctype="multipart/form-data">
+	<div class="dz-message" data-dz-message><span>Drop a file here to clean your training data.</span></div>
+	{{ dropzone.style('border: 2px dashed #0087F7; padding: 5px; margin: 10px; min-height: 100px;') }}	
+</form>
+
+<script>
+Dropzone.autoDiscover = false;
+$(function() {
+	var myDropzone = new Dropzone("#dropzone");
+	Dropzone.options.myDropzone = {
+		maxFiles: 1
+	};
+	myDropzone.on("addedfile", function(){
+		// Called when a file is added
+		myDropzone.processQueue();
+	});
+	myDropzone.on("queuecomplete", function(file) {
+		// Called when all files in the queue finish uploading
+		window.location = "{{ url_for('upload_.upload') }}";
+	});
+});
+</script>
+{% endblock %}

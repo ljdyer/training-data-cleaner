@@ -1,0 +1,30 @@
+{% extends 'main.html' %}
+
+{% block imports %}
+<script src="static/js/overview.js"></script>
+{% endblock %}
+
+{% block content %}
+	<table class="table">
+		<tr>
+			<th></th>
+			<th>Diagnosis</th>
+			<th>Recommended action</th>
+			<th>Estimated rows remaining</th>
+			<th></th>
+		</tr>
+		{% for issue, issue_result in results.items() %}
+		<tr class="{{ issue_result.num | more_than_zero('table-success', 'table-danger') }}">
+			<th class="number">{{ loop.index }}</th>
+			<td>Your data contains {{ issue_result.num }} <b>{{ issue_result.num | pluralize(issue_result.singular, issue_result.plural) }}</b></td>
+			<td>{{ issue_result.num | more_than_zero('-', issue_result.recc_action) }}</td>
+			<td>{{ issue_result.remaining }}</td>
+			{% if issue_result.num > 0 %}
+				<td><a href="{{ url_for(issue) }}">Take action</a></td>
+			{% else %}
+				<td>No action required</td>
+			{% endif %}
+		</tr>
+		{% endfor %}
+	</table>
+{% endblock %}

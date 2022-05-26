@@ -1,0 +1,18 @@
+{% extends 'main.html' %}
+
+{% block imports %}
+<script>
+	selectorsAndClasses = {
+		'.row_heading': 'col-1 text-right pr-1',
+		'th.col0': 'col-5 p-0 m-0',
+		'th.col1': 'col-5 p-0 m-0'
+	}
+</script>
+<script src="static/js/main.js"></script>
+{% endblock %}
+
+{% block content %}
+	<div class="table-container-lg border border-dark">
+		{{ data_html | safe }}
+	</div>
+{% endblock %}
