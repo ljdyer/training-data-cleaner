@@ -217,9 +217,10 @@ def overview():
 def view_data():
 
     df = get_df()
-    data_html = df_to_html_table(df)
+    columns = df.columns
+    # data_html = df_to_html_table(df)
     print('yo')
-    return render_template('view_data.html', data_html=data_html)
+    return render_template('view_data.html', columns=columns, df=df)
 
 
 # === ERROR HANDLERS ===

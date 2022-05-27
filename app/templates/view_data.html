@@ -12,10 +12,25 @@
 <script src="static/js/main.js"></script>
 {% endblock %}
 
-
-
 {% block content %}
-	<div class="table-wrapper">
-		{{ data_html | safe }}
+	<div container class="mx-3">
+		<table class="table table-packed">
+			<thead>
+				<tr>
+					{% for column_name in columns %}
+						<th class="col-6">{{ column_name }}</th>
+					{% endfor %}
+				</tr>
+			</thead>
+			<tbody>
+				{% for index, row in df.iterrows() %}
+					<tr>
+					{% for column_name in columns %}
+						<td contenteditable="true">{{ row[column_name] }}</td>
+					{% endfor %}
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
 	</div>
 {% endblock %}
