@@ -5,8 +5,6 @@ Helper functions to generate HTML tables from pandas dataframes
 """
 
 import pandas as pd
-from .issues import ISSUES
-from .diagnostics import keep
 
 
 # ====================

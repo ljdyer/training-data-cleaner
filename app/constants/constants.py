@@ -1,4 +1,25 @@
-from .masks import *
+from helpers.issue_functions import *
+
+
+PAGES = [
+    ('upload', 'Upload', 'upload_.upload_page'),
+    ('overview', 'Summary', 'overview'),
+    ('view_data', 'View', 'view_data'),
+    ('editor', 'Edit', 'edit')
+]
+
+ISSUE_NAMES = [
+    ('Double duplicate', 'double_duplicate'),
+    ('Empty', 'empty'),
+    ('Source duplicate', 'source_duplicate'),
+    ('Same', 'same')
+]
+
+BUTTONS = [
+    ['Remove all', 'button-danger'],
+    ['Save displayed', 'button-danger'],
+    ['Display next page', 'button-success']
+]
 
 ISSUES = {
     'empty': {
@@ -6,30 +27,29 @@ ISSUES = {
         'plural': 'empties',
         'recc_action': 'Remove all',
         'mask': mask_empty,
-        'link_text': 'Empties'
+        'mask_preview': mask_empty
     },
-    'double_dup': {
+    'double_duplicate': {
         'singular': 'double duplicate',
         'plural': 'double duplicates',
         'recc_action': 'Remove all but the first instance of each',
         'mask': mask_double_dup,
         'mask_preview': mask_double_dup_preview,
-        'link_text': 'Double duplicates'
+        'preview': preview_double_dup
     },
-    'source_dup': {
+    'source_duplicate': {
         'singular': 'source duplicate',
         'plural': 'source duplicates',
         'recc_action': 'Select the best translation for each and remove the '
                        + 'rest',
         'mask': mask_source_dup,
-        'mask_preview': mask_source_dup_preview,
-        'link_text': 'Source duplicates'
+        'mask_preview': mask_source_dup_preview
     },
     'same': {
         'singular': 'same',
         'plural': 'sames',
         'recc_action': 'Remove all',
         'mask': mask_same,
-        'link_text': 'Sames'
+        'mask_preview': mask_same
     }
 }

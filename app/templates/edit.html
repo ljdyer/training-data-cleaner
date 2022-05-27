@@ -1,10 +1,47 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<nav class="nav nav-pills nav-fill">
-    <a class="nav-link active" aria-current="page" href="#">Empties</a>
-    <a class="nav-link" href="#">Double duplicates</a>
-    <a class="nav-link" href="#">Single duplicates</a>
-    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Sames</a>
-</nav>
+
+    <nav class="mx-3 mb-2 nav nav-pills nav-fill">
+        {% for display_name, this_issue_id in issues %}
+            <a class="m-2 nav-link {{ 'active btn-success' if issue_id==this_issue_id else 'btn-success' }}" aria-current="page"
+            href="{{ url_for('edit', issue_id=this_issue_id) }}" | >({{loop.index}}) {{display_name}}</a>
+        {% endfor %}
+    </nav>
+
+        <div class="container-fluid mb-3 mx-3 w-100">
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-outline-success">Turn all green (G)</button></div>
+                <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-outline-danger">Turn all red (R)</button></div>
+                <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-success">Skip page (S)</button></div>
+                <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-primary">Submit page (Enter)</button></div>
+                <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-danger">Remove all (X)</button></div>
+                <div class="col-md-1"></div>
+            </div>
+        </div>
+
+    {% if not df.empty %}
+    <div container class="mx-3 pb-1">
+        <table class="table table-packed">
+            <thead class="thead-dark">
+                <tr>
+                    <th class="col-1">Index</th>
+                    <th class="col-5">Source</th>
+                    <th class="col-6">Target</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for index, row in df.iterrows() %}
+                <tr class="{% if row.keep %}{{ 'table-success' }} {% else %}{{ 'table-danger' }} {% endif %}">
+                    <td>{{ index }}</td>
+                    <td>{{ row.source }}</td>
+                    <td>{{ row.target }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% endif %}
+
 {% endblock %}

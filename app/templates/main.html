@@ -4,10 +4,10 @@
 <head>
     <meta charset="utf-8">
     <title>Training data cleaner</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="static/img/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="static/img/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="static/img/favicon/favicon-16x16.png">
-    <link rel="manifest" href="static/img/favicon/site.webmanifest">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='img/favicon/apple-touch-icon.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='img/favicon/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='img/favicon/favicon-16x16.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='img/favicon/site.webmanifest') }}">
     <!-- import bootstrap cdn-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
@@ -24,15 +24,16 @@
         integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
         crossorigin="anonymous"></script>
     <!-- CSS stylesheet -->
-    <link href="/static/css/style.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
     {% block imports %}{% endblock %}
 </head>
 
 <body>
     <!-- top navbar -->
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
+        <!-- logo and site name -->
         <a class="navbar-brand" href="#">
-            <img src="static/img/cleaner-white.png" width="30" height="30" class="d-inline-block align-top" alt="">
+            <img src="{{ url_for('static', filename='img/cleaner-white.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
             Training data cleaner
         </a>
         <!-- hamburger button that toggles the navbar-->
@@ -44,25 +45,21 @@
         <!-- navbar links -->
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <ul class="navbar-nav mr-auto">
-                <li class="nav-item {{ 'active' if active_page == 'upload' else '' }}">
-                    <a class='nav-link' href="{{ url_for('upload_.upload_page') }}">Upload</a>
+                {% for page_id, display_name, route_id in pages %}
+                <li class="nav-item {{ 'active' if active_page == page_id else '' }}">
+                    <a class='nav-link' href="{{ url_for(route_id) }}">{{ display_name | title_case }}</a>
                 </li>
-                <li class="nav-item {{ 'active' if active_page == 'overview' else '' }}">
-                    <a class='nav-link' href="{{ url_for('overview') }}">Overview</a>
-                </li>
-                <li class="nav-item {{ 'active' if active_page == 'view_data' else '' }}">
-                    <a class='nav-link' href="{{ url_for('view_data') }}">View data</a>
-                </li>
+                {% endfor %}
             </ul>
         </div>
+        <!-- info about currently uploaded file -->
         <span class="navbar-text">
             {% if fname %}
                 <a href="{{ url_for('download') }}">{{ fname }}</a> | {{ num_rows }} row{{ num_rows | pluralize }}
             {% endif %}
         </span>
     </nav>
-    <!-- This container contains the sidebar and main content of the page -->
-    <!-- h-100 takes the full height of the body-->
+    <!-- page content -->
     {% block content %}{% endblock %}
 </body>
 

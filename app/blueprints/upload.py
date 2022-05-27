@@ -20,12 +20,12 @@ def save_df(df: pd.DataFrame):
     session['df'] = df.to_dict()
 
 
+# ====================
 @upload_.route('/')
 def index():
     """Redirect to upload page on app start"""
 
     return redirect(url_for('upload_.upload_page'))
-
 
 
 # ====================
@@ -57,6 +57,7 @@ def upload():
 
         # TODO: Validate file (type, num_columns, etc)
         df = read_df_from_excel(session['fpath'])
+        df.columns = ['source', 'target']
         save_df(df)
         session['source_column'] = df.columns[0]
         session['target_column'] = df.columns[1]

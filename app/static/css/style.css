@@ -8,10 +8,16 @@ body {
 
 /* table-packed class for compact tables */
 table.table-packed th, table.table-packed td, table.table-packed .form-control {
-    padding: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
     margin: 0px;
 }
 
 table.table-packed {
     border-spacing: 0px !important
+}
+
+.checkbox{
+  margin:0px !important;
+  padding:0px !important;
 }

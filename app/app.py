@@ -17,18 +17,16 @@ from flask_session import Session
 from context_processor.context_processor import provide_context_info
 from cleaner.dataframe_helper import (get_first_dup_df, get_source_dup_df,
                                       read_df_from_excel)
-from cleaner.diagnostics import (get_diagnostic_results, get_num_and_remaining,
-                                 remove)
+from cleaner.diagnostics import (get_diagnostic_results)
 from cleaner.excel_helper import write_excel
 from cleaner.html_helper import (df_to_html_table, double_dup_preview,
                                  empties_preview, sames_preview,
                                  source_dup_preview)
-from cleaner.issues import ISSUES
-from cleaner.misc_helper import get_timestamp
-
-from helpers.helper import save_df
+from constants.constants import *
+from helpers.helper import *
 
 from blueprints.upload import upload_
+from template_filters.template_filters import pluralize, more_than_zero, title_case
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -59,39 +57,19 @@ app.config.update(
 )
 server_session = Session(app)
 
+# Routes
 app.register_blueprint(upload_)
+# Template filters
+app.jinja_env.filters['more_than_zero'] = more_than_zero
+app.jinja_env.filters['pluralize'] = pluralize
+app.jinja_env.filters['title_case'] = title_case
+# Context processor
 app.context_processor(provide_context_info)
 
 dropzone = Dropzone(app)
 
-MAIN_PAGES = [
-    ('upload_page', 'Upload file'),
-    ('overview', 'Overview'),
-    ('view_data', 'View data')
-]
-
 
 # === GENERAL FUNCTIONS ===
-
-# ====================
-def get_df() -> pd.DataFrame:
-
-    try:
-        return pd.DataFrame(session['df'])
-    except Exception as e:
-        raise NoDataException
-
-
-# ====================
-def generate_download_fname():
-
-    return f"{session['fname_root']}_{get_timestamp()}.{session['fname_ext']}"
-
-
-# ====================
-def get_download_fpath(fname):
-
-    return os.path.join(app.config['DOWNLOAD_FOLDER'], fname)
 
 
 # ====================
@@ -112,54 +90,7 @@ def remove_and_save(issue_id: str):
     save_df(df)
 
 
-# ====================
-def get_skipped_sources():
-
-    if 'skipped_sources' not in session:
-        skipped_sources = []
-    else:
-        skipped_sources = session['skipped_sources']
-    return skipped_sources
-
-
-# ====================
-def add_skipped_source(source_text):
-
-    skipped_sources = get_skipped_sources()
-    session['skipped_sources'] = skipped_sources + [source_text]
-
-
-# ====================
-def reset_skipped_sources():
-
-    session['skipped_sources'] = []
-
-
-# ====================
-def drop_rows(rows_to_remove):
-
-    df = get_df()
-    df = df.drop(rows_to_remove)
-    save_df(df)
-
-
 # === TEMPLATE FILTERS ===
-
-
-# ====================
-@app.template_filter('pluralize')
-def pluralize(number, singular='', plural='s'):
-    """Template filter to pluralize strings depending on their number"""
-
-    return singular if number == 1 else plural
-
-
-# ====================
-@app.template_filter('more_than_zero')
-def more_than_zero(number, zero, more_than_zero):
-    """Template filter to pluralize strings depending on their number"""
-
-    return zero if number == 0 else more_than_zero
 
 
 # === CONTEXT PROCESSORS ===
@@ -176,11 +107,21 @@ def more_than_zero(number, zero, more_than_zero):
 
 
 # ====================
-@app.route('/edit/<string:issue_id>', methods=['GET'])
-def edit(issue_id):
+@app.route('/edit')
+@app.route('/edit/<string:issue_id>')
+def edit(issue_id=None):
     """Render edit page"""
 
-    return render_template('edit.html', issue_id=issue_id)
+    preview_df = pd.DataFrame()
+    if issue_id is not None:
+        df = get_df()
+        mask = ISSUES[issue_id]['mask_preview']
+        preview_df = keep(df, mask).sort_values(['source', 'target'])
+    if issue_id == 'double_duplicate':
+        df = get_df()
+        preview_df = ISSUES['double_duplicate']['preview'](df)
+
+    return render_template('edit.html', issue_id=issue_id, df=preview_df)
 
 
 # ====================
@@ -206,7 +147,6 @@ def download():
 @app.route('/overview')
 def overview():
 
-    reset_skipped_sources()
     df = get_df()
     results = get_diagnostic_results(df)
     return render_template('overview.html', results=results)
@@ -224,11 +164,6 @@ def view_data():
 
 
 # === ERROR HANDLERS ===
-
-
-# ====================
-class NoDataException(Exception):
-    pass
 
 
 # ====================
