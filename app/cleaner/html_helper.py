@@ -37,7 +37,7 @@ def df_to_html_table(df: pd.DataFrame, td_classes: pd.DataFrame = None) -> str:
     styler = (
         df.style
         .format(formatter=None, na_rep='')
-        .set_table_attributes('class="table table-packed"')
+        .set_table_attributes('class="table table-packed table-scroll"')
     )
     if td_classes is not None:
         styler = styler.set_td_classes(td_classes)

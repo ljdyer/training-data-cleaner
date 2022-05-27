@@ -2,9 +2,8 @@ html, body {
     height: 100%;
 }
 
-/* Don't allow window scrolling */
 body {
-  overflow-y:hidden;
+    padding-top: 70px;
 }
 
 /* table-packed class for compact tables */
@@ -15,18 +14,4 @@ table.table-packed th, table.table-packed td, table.table-packed .form-control {
 
 table.table-packed {
     border-spacing: 0px !important
-}
-
-.table-container {
-    overflow-y:scroll;
-    max-height:300px;   
-}
-
-.table-container-lg {
-    overflow-y:scroll;
-    max-height: 85vh !important;
-}
-
-.link-inline-block {
-    display: inline-block;
 }

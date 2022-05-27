@@ -85,13 +85,13 @@ def get_df() -> pd.DataFrame:
 # ====================
 def generate_download_fname():
 
-    f"{session['fname_root']}_{get_timestamp()}.{session['fname_ext']}"
+    return f"{session['fname_root']}_{get_timestamp()}.{session['fname_ext']}"
 
 
 # ====================
 def get_download_fpath(fname):
 
-    os.path.join(app.config['DOWNLOAD_FOLDER'], fname)
+    return os.path.join(app.config['DOWNLOAD_FOLDER'], fname)
 
 
 # ====================
@@ -189,8 +189,11 @@ def download():
     """Download current version of training data file"""
 
     df = get_df()
+    print(session['fname_root'])
     download_fname = generate_download_fname()
+    print(download_fname)
     download_fpath = get_download_fpath(download_fname)
+    print(df)
     write_excel(df, download_fpath)
 
     return send_from_directory(

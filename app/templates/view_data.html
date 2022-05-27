@@ -1,4 +1,5 @@
 {% extends 'main.html' %}
+{% set active_page = "view_data" %}
 
 {% block imports %}
 <script>
@@ -11,8 +12,10 @@
 <script src="static/js/main.js"></script>
 {% endblock %}
 
+
+
 {% block content %}
-	<div class="table-container-lg border border-dark">
+	<div class="table-wrapper">
 		{{ data_html | safe }}
 	</div>
 {% endblock %}

@@ -30,7 +30,7 @@
 
 <body>
     <!-- top navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">
             <img src="static/img/cleaner-white.png" width="30" height="30" class="d-inline-block align-top" alt="">
             Training data cleaner
@@ -43,9 +43,17 @@
         </button>
         <!-- navbar links -->
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <!-- <a class="nav-item nav-link" href="#">About</a> -->
-            </div>
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item {{ 'active' if active_page == 'upload' else '' }}">
+                    <a class='nav-link' href="{{ url_for('upload_.upload_page') }}">Upload</a>
+                </li>
+                <li class="nav-item {{ 'active' if active_page == 'overview' else '' }}">
+                    <a class='nav-link' href="{{ url_for('overview') }}">Overview</a>
+                </li>
+                <li class="nav-item {{ 'active' if active_page == 'view_data' else '' }}">
+                    <a class='nav-link' href="{{ url_for('view_data') }}">View data</a>
+                </li>
+            </ul>
         </div>
         <span class="navbar-text">
             {% if fname %}
@@ -55,19 +63,7 @@
     </nav>
     <!-- This container contains the sidebar and main content of the page -->
     <!-- h-100 takes the full height of the body-->
-    <div class="container-fluid h-100">
-        <div class="row h-100">
-            <div class="col-2 pt-3 bg-primary">
-                <!-- Navigation links in sidebar-->
-                
-            </div>
-            <!--Contains the main content
-                    of the webpage-->
-            <div class="col-10 pt-3" style="text-align: justify;">
-                {% block content %}{% endblock %}
-            </div>
-        </div>
-    </div>
+    {% block content %}{% endblock %}
 </body>
 
 </html>
