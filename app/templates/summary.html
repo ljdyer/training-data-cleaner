@@ -1,0 +1,38 @@
+{% extends 'main.html' %}
+
+{% block imports %}
+<script src="static/js/overview.js"></script>
+{% endblock %}
+
+{% block content %}
+
+<fieldset class="mx-3 mb-2 px-3">
+	<legend class="px-3">Passed</legend>
+	<p class="mx-3">Your data does not contain any of the following:</p>
+	<div class="row mx-3 mt-2">
+		{% for issue in passed %}
+		<div class="card mx-2 mb-4 text-white bg-success">
+			<p class="m-2">{{ issue.plural }}</p>
+		</div>
+		{% endfor %}
+	</div>
+</fieldset>
+
+<fieldset class="mx-3 mb-2">
+	<legend class="mx-3 px-3">Issues</legend>
+	<div class="row mx-3 mt-2">
+	{% for issue in failed %}
+		<div class="col-sm-4 col-md-3 mb-4 md-3 d-flex">
+			<div class="card text-white bg-danger flex-fill">
+				<div class="card-body">
+					<h5 class="card-title">Your data contains {{ issue.num }} <b>{{ issue.num | pluralize(issue.singular, issue.plural) }}</b>.</h5>
+					<p class="card-text"><b>Recommended action:</b> {{ issue.recc_action }}</p>
+					<a href="{{ url_for('edit', issue_id = issue.issue_id) }}" class="link-light card-link">Take action</a>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+	</div>
+</fieldset>
+
+{% endblock %}

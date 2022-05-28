@@ -1,6 +1,6 @@
 import pandas as pd
 # from cleaner.issues import ISSUES
-from constants.constants import *
+from app_elements.constants import *
 from flask import session
 
 

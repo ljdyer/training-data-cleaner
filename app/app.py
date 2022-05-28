@@ -5,28 +5,19 @@ Main program for training data cleaner
 """
 
 import os
-from typing import Callable
 
 import pandas as pd
 import redis
-from flask import (Flask, json, redirect, render_template, request,
-                   send_from_directory, session, url_for)
+from flask import Flask, render_template, request, send_from_directory, session
 from flask_dropzone import Dropzone
 from flask_session import Session
 
-from context_processor.context_processor import provide_context_info
-from cleaner.dataframe_helper import (get_first_dup_df, get_source_dup_df,
-                                      read_df_from_excel)
-from cleaner.diagnostics import (get_diagnostic_results)
-from cleaner.excel_helper import write_excel
-from cleaner.html_helper import (df_to_html_table, double_dup_preview,
-                                 empties_preview, sames_preview,
-                                 source_dup_preview)
-from constants.constants import *
+from app_elements.blueprints.upload import upload_
+from app_elements.context_processor import *
+from app_elements.template_filters import *
+from app_elements.constants import *
+from helpers.excel import *
 from helpers.helper import *
-
-from blueprints.upload import upload_
-from template_filters.template_filters import pluralize, more_than_zero, title_case
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -69,59 +60,42 @@ app.context_processor(provide_context_info)
 dropzone = Dropzone(app)
 
 
-# === GENERAL FUNCTIONS ===
-
-
 # ====================
-def generate_preview(issue_id: str, preview: Callable):
-
-    df = get_df()
-    num, remaining = get_num_and_remaining(df, ISSUES[issue_id]['mask'])
-    data_html = None
-    if num > 0:
-        data_html = preview(df)
-    return num, remaining, data_html
-
-
-# ====================
-def remove_and_save(issue_id: str):
-    df = get_df()
-    df = remove(df, ISSUES[issue_id]['mask'])
-    save_df(df)
-
-
-# === TEMPLATE FILTERS ===
-
-
-# === CONTEXT PROCESSORS ===
-
-
-
-
-# === ROUTES ===
-
-
-
-
-
-
-
-# ====================
-@app.route('/edit')
-@app.route('/edit/<string:issue_id>')
-def edit(issue_id=None):
+@app.route('/edit', methods = ['GET'])
+def edit():
     """Render edit page"""
 
-    preview_df = pd.DataFrame()
-    if issue_id is not None:
+    issue_id = request.args.get('issue_id')
+    action = request.args.get('action')
+
+    if issue_id is None:
+        preview_df = pd.DataFrame()
+
+    else:
         df = get_df()
-        mask = ISSUES[issue_id]['mask_preview']
-        preview_df = keep(df, mask).sort_values(['source', 'target'])
-    if issue_id == 'double_duplicate':
-        df = get_df()
-        preview_df = ISSUES['double_duplicate']['preview'](df)
+        if action == 'remove_all':
+            mask = ISSUES[issue_id]['mask']
+            df = remove(df, mask)
+            save_df(df)
+
+        # Generate preview
+        if issue_id == 'double_duplicate':
+            preview_df = ISSUES['double_duplicate']['preview'](df)
+        else:
+            mask = ISSUES[issue_id]['mask_preview']
+            preview_df = keep(df, mask).sort_values(['source', 'target'])
 
     return render_template('edit.html', issue_id=issue_id, df=preview_df)
+
+
+# ====================
+@app.route('/summary')
+def summary():
+    """Render edit page"""
+
+    df = get_df()
+    passed, failed, remaining = diagnose_issues(df, ISSUES, ISSUE_NAMES)
+    return render_template('summary.html', passed=passed, failed=failed, remaining=remaining)
 
 
 # ====================
@@ -141,15 +115,6 @@ def download():
         directory=app.config['DOWNLOAD_FOLDER'],
         path="", filename=download_fname
     )
-
-
-# ====================
-@app.route('/overview')
-def overview():
-
-    df = get_df()
-    results = get_diagnostic_results(df)
-    return render_template('overview.html', results=results)
 
 
 # ====================

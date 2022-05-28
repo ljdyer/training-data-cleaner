@@ -13,6 +13,14 @@ table.table-packed th, table.table-packed td, table.table-packed .form-control {
     margin: 0px;
 }
 
+fieldset {
+    border: 1px solid #000;
+}
+
+legend {
+    width: auto
+}
+
 table.table-packed {
     border-spacing: 0px !important
 }

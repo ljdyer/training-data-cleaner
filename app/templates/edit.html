@@ -1,7 +1,6 @@
 {% extends 'main.html' %}
 
 {% block content %}
-
     <nav class="mx-3 mb-2 nav nav-pills nav-fill">
         {% for display_name, this_issue_id in issues %}
             <a class="m-2 nav-link {{ 'active btn-success' if issue_id==this_issue_id else 'btn-success' }}" aria-current="page"
@@ -16,13 +15,13 @@
                 <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-outline-danger">Turn all red (R)</button></div>
                 <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-success">Skip page (S)</button></div>
                 <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-primary">Submit page (Enter)</button></div>
-                <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-danger">Remove all (X)</button></div>
+                <div class="col-md-2"><a class="btn-block mx-2 btn btn-danger" href="{{ url_for('edit', issue_id=issue_id, action='remove_all') }}">Remove all (X)</a></div>
                 <div class="col-md-1"></div>
             </div>
         </div>
 
     {% if not df.empty %}
-    <div container class="mx-3 pb-1">
+    <div class="mx-3 pb-1">
         <table class="table table-packed">
             <thead class="thead-dark">
                 <tr>
@@ -43,5 +42,4 @@
         </table>
     </div>
     {% endif %}
-
 {% endblock %}

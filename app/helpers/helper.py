@@ -3,7 +3,7 @@ import os
 from typing import Callable, Tuple
 
 import pandas as pd
-from exceptions.exceptions import NoDataException
+from app_elements.exceptions import NoDataException
 from flask import app, session
 
 
@@ -97,3 +97,28 @@ def get_timestamp() -> str:
     to file names"""
 
     return datetime.datetime.now().strftime("%d%b%Y-%H%M%S")
+
+
+# ====================
+def diagnose_issues(df: pd.DataFrame, issues: dict, issue_names: list) -> Tuple[list, list, int]: 
+
+    issue_results = []
+    for display_name, issue_id in issue_names:
+        issue_results.append({
+            **issues[issue_id],
+            'issue_id': issue_id,
+            'display_name': display_name,
+            'num': len(keep(df, issues[issue_id]['mask']))
+        })
+    print(issue_results)
+    
+    passed = [issue for issue in issue_results if issue['num'] == 0]
+    failed = [issue for issue in issue_results if issue['num'] > 0]
+
+    new_df = df.copy()
+    for issue in failed:
+        new_df = remove(new_df, issue['mask'])
+    
+    remaining = len(new_df)
+
+    return passed, failed, remaining

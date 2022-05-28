@@ -3,7 +3,7 @@ from helpers.issue_functions import *
 
 PAGES = [
     ('upload', 'Upload', 'upload_.upload_page'),
-    ('overview', 'Summary', 'overview'),
+    ('summary', 'Summary', 'summary'),
     ('view_data', 'View', 'view_data'),
     ('editor', 'Edit', 'edit')
 ]
@@ -13,12 +13,6 @@ ISSUE_NAMES = [
     ('Empty', 'empty'),
     ('Source duplicate', 'source_duplicate'),
     ('Same', 'same')
-]
-
-BUTTONS = [
-    ['Remove all', 'button-danger'],
-    ['Save displayed', 'button-danger'],
-    ['Display next page', 'button-success']
 ]
 
 ISSUES = {
