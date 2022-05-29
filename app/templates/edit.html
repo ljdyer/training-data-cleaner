@@ -1,45 +1,52 @@
 {% extends 'main.html' %}
 
+{% block imports %}
+    <script type="text/javascript">
+        issueId = "{{ issue_id }}";
+        editUrl = "{{ url_for('edit') }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/actions.js') }}"></script>
+{% endblock %}
+
 {% block content %}
-    <nav class="mx-3 mb-2 nav nav-pills nav-fill">
-        {% for display_name, this_issue_id in issues %}
-            <a class="m-2 nav-link {{ 'active btn-success' if issue_id==this_issue_id else 'btn-success' }}" aria-current="page"
-            href="{{ url_for('edit', issue_id=this_issue_id) }}" | >({{loop.index}}) {{display_name}}</a>
+<nav class="mx-3 nav nav-pills nav-fill d-flex align-items-center">
+    <span class="m-2 nav-text col-1"><b>Filters</b></span>
+    {% for display_name, this_issue_id in issues %}
+        <a class="m-2 nav-link btn-primary {{ 'active' if issue_id==this_issue_id }}"
+        href="{{ url_for('edit', issue_id=this_issue_id) }}" | >({{loop.index}}) {{display_name}}</a>
+    {% endfor %}
+</nav>
+<nav class="mx-3 mb-2 nav nav-pills nav-fill d-flex align-items-center">
+    <span class="m-2 nav-text col-1"><b>Actions</b></span>
+    {% if actions %}
+        {% for action in actions %}
+            <a class="m-2 nav-link {{ action.class}}" href="#" id="action_{{ action.id }}"
+            data-shortcut="{{ action.shortcut }}" data-action="{{ action.id }}">
+                {{ action.text }} ({{action.shortcut | title}})</a>
         {% endfor %}
-    </nav>
-
-        <div class="container-fluid mb-3 mx-3 w-100">
-            <div class="row">
-                <div class="col-md-1"></div>
-                <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-outline-success">Turn all green (G)</button></div>
-                <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-outline-danger">Turn all red (R)</button></div>
-                <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-success">Skip page (S)</button></div>
-                <div class="col-md-2"><button type="button" class="btn-block mx-2 btn btn-primary">Submit page (Enter)</button></div>
-                <div class="col-md-2"><a class="btn-block mx-2 btn btn-danger" href="{{ url_for('edit', issue_id=issue_id, action='remove_all') }}">Remove all (X)</a></div>
-                <div class="col-md-1"></div>
-            </div>
-        </div>
-
-    {% if not df.empty %}
-    <div class="mx-3 pb-1">
-        <table class="table table-packed">
-            <thead class="thead-dark">
-                <tr>
-                    <th class="col-1">Index</th>
-                    <th class="col-5">Source</th>
-                    <th class="col-6">Target</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for index, row in df.iterrows() %}
-                <tr class="{% if row.keep %}{{ 'table-success' }} {% else %}{{ 'table-danger' }} {% endif %}">
-                    <td>{{ index }}</td>
-                    <td>{{ row.source }}</td>
-                    <td>{{ row.target }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
     {% endif %}
+</nav>
+
+{% if not df.empty %}
+<div class="mx-3 pb-1">
+    <table class="table table-packed">
+        <thead class="thead-dark">
+            <tr>
+                <th class="col-1">Index</th>
+                <th class="col-5">Source</th>
+                <th class="col-6">Target</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for index, row in df.iterrows() %}
+            <tr class="{% if row.keep %}{{ 'table-success' }} {% else %}{{ 'table-danger' }} {% endif %}">
+                <td>{{ index }}</td>
+                <td>{{ row.source }}</td>
+                <td>{{ row.target }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
 {% endblock %}

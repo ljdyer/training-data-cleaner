@@ -25,6 +25,7 @@
         crossorigin="anonymous"></script>
     <!-- CSS stylesheet -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/shortcuts.js')}}"></script>
     {% block imports %}{% endblock %}
 </head>
 
@@ -47,7 +48,7 @@
             <ul class="navbar-nav mr-auto">
                 {% for page_id, display_name, route_id in pages %}
                 <li class="nav-item {{ 'active' if active_page == page_id else '' }}">
-                    <a class='nav-link' href="{{ url_for(route_id) }}">{{ display_name | title_case }}</a>
+                    <a class='nav-link' href="{{ url_for(route_id) }}">{{ display_name }}</a>
                 </li>
                 {% endfor %}
             </ul>

@@ -18,6 +18,8 @@ from app_elements.template_filters import *
 from app_elements.constants import *
 from helpers.excel import *
 from helpers.helper import *
+from helpers.issue_def import *
+from helpers.issue_functions import *
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -69,18 +71,19 @@ def edit():
     action = request.args.get('action')
 
     if issue_id is None:
-        preview_df = pd.DataFrame()
+        return render_template('edit.html')
 
     else:
         df = get_df()
         if action == 'remove_all':
-            mask = ISSUES[issue_id]['mask']
-            df = remove(df, mask)
+            df = ISSUES[issue_id]['remove_all'](df)
             save_df(df)
 
         # Generate preview
         if issue_id == 'double_duplicate':
-            preview_df = ISSUES['double_duplicate']['preview'](df)
+            preview_df, actions = ISSUES['double_duplicate']['preview'](df)
+            return render_template('edit.html', issue_id=issue_id, df=preview_df,
+                           actions=actions)
         else:
             mask = ISSUES[issue_id]['mask_preview']
             preview_df = keep(df, mask).sort_values(['source', 'target'])
