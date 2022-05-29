@@ -1,7 +1,7 @@
 from helpers.issue_functions import *
 
 PAGES = [
-    ('upload', 'Upload', 'upload_.upload_page'),
+    ('upload', 'Upload', 'upload_.upload'),
     ('summary', 'Summary', 'summary'),
     ('view_data', 'View', 'view_data'),
     ('editor', 'Edit by issue', 'edit')

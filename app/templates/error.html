@@ -4,7 +4,7 @@
 {% if error_type == 'no_df' %}
 <p class="text-center">
     You haven't uploaded any training data!
-    <a href="{{ url_for('upload_page') }}">Click here</a> to upload a file.
+    <a href="{{ url_for('upload_.upload') }}">Click here</a> to upload a file.
 </p>
 {% elif error_type == 'not_xlsx' %}
 <p class="text-center">
@@ -14,7 +14,7 @@
 <p class="text-center">
     An unknown error occurred during data analysis.
     Have you uploaded a file?
-    If not, <a href="{{ url_for('upload_page') }}">click here</a> to upload a file.
+    If not, <a href="{{ url_for('upload_.upload') }}">click here</a> to upload a file.
 </p>
 {% elif error_type == '500' %}
 <p class="text-center">

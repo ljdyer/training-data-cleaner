@@ -15,16 +15,20 @@ function handleAction($e){
     switch (action){
         case 'select_all':
             $('tr').removeClass('table-success').addClass('table-danger')
-            break;
-        case 'deselect_all':
-            $('tr').removeClass('table-danger').addClass('table-success')
-            break;
-        case 'remove_all':
+            return;
+            case 'deselect_all':
+                $('tr').removeClass('table-danger').addClass('table-success')
+            return;
+    }
+    url = editUrl;
+    data = { 'issue_id': issueId, 'action': action };
+    switch (action){
+        case 'remove_all', 'skip':
             url = editUrl;
-            data = { 'issue_id': issueId, 'action': action };
             $.post(url, data).done(function () {
                 location.reload(true)
             });
-            break;       
+            return;
+        case 'skip':
     }
 }
