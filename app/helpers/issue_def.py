@@ -1,14 +1,6 @@
 from .issue_functions import *
 
 ISSUES = {
-    'empty': {
-        'singular': 'empty',
-        'plural': 'empties',
-        'recc_action': 'Remove all',
-        'mask': mask_empty,
-        'actions': [],
-        'mask_preview': mask_empty
-    },
     'double_duplicate': {
         'singular': 'double duplicate',
         'plural': 'double duplicates',
@@ -17,6 +9,15 @@ ISSUES = {
         'mask_preview': mask_double_dup_preview,
         'preview': preview_double_dup,
         'remove_all': remove_all_double_dup
+    },
+    'empty': {
+        'singular': 'empty',
+        'plural': 'empties',
+        'recc_action': 'Remove all',
+        'mask': mask_empty,
+        'mask_preview': mask_empty,
+        'preview': preview_empty,
+        'remove_all': remove_all_empty
     },
     'source_duplicate': {
         'singular': 'source duplicate',

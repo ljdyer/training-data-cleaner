@@ -4,18 +4,20 @@ app.py
 Main program for training data cleaner
 """
 
+import json
 import os
 
 import pandas as pd
 import redis
-from flask import Flask, render_template, request, send_from_directory, session
+from flask import (Flask, redirect, render_template, request,
+                   send_from_directory, session, url_for)
 from flask_dropzone import Dropzone
 from flask_session import Session
 
 from app_elements.blueprints.upload import upload_
+from app_elements.constants import *
 from app_elements.context_processor import *
 from app_elements.template_filters import *
-from app_elements.constants import *
 from helpers.excel import *
 from helpers.helper import *
 from helpers.issue_def import *
@@ -63,32 +65,33 @@ dropzone = Dropzone(app)
 
 
 # ====================
-@app.route('/edit', methods = ['GET'])
+@app.route('/edit', methods = ['GET', 'POST'])
 def edit():
     """Render edit page"""
+    df = get_df()
 
-    issue_id = request.args.get('issue_id')
-    action = request.args.get('action')
-
-    if issue_id is None:
-        return render_template('edit.html')
-
-    else:
-        df = get_df()
+    if request.method == 'POST':
+        issue_id = request.values.get('issue_id')
+        action = request.values.get('action')
         if action == 'remove_all':
             df = ISSUES[issue_id]['remove_all'](df)
             save_df(df)
+            return json.dumps({'success': True})
 
+    if request.method == 'GET':
+        issue_id = request.args.get('issue_id')
+        action = request.args.get('action')
         # Generate preview
-        if issue_id == 'double_duplicate':
-            preview_df, actions = ISSUES['double_duplicate']['preview'](df)
+        if issue_id is None:
+            return render_template('edit.html')
+        elif issue_id in ['double_duplicate', 'empty']:
+            preview_df, actions = ISSUES[issue_id]['preview'](df)
             return render_template('edit.html', issue_id=issue_id, df=preview_df,
                            actions=actions)
         else:
             mask = ISSUES[issue_id]['mask_preview']
             preview_df = keep(df, mask).sort_values(['source', 'target'])
-
-    return render_template('edit.html', issue_id=issue_id, df=preview_df)
+            return render_template('edit.html', issue_id=issue_id, df=preview_df)
 
 
 # ====================

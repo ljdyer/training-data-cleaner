@@ -40,14 +40,6 @@ ACTION_REMOVE_ALL_DUPLICATES = {
     'class': 'btn-danger'
 }
 
-ACTIONS = [
-    ACTION_SELECT_ALL,
-    ACTION_DESELECT_ALL,
-    ACTION_SKIP,
-    ACTION_SUBMIT,
-    ACTION_REMOVE_ALL_DUPLICATES
-]
-
 
 # === DOUBLE DUPLICATE ===
 
@@ -67,6 +59,8 @@ def mask_double_dup_preview(df: pd.DataFrame) -> pd.Series:
 def preview_double_dup(df: pd.DataFrame) -> pd.DataFrame:
 
     preview_df = df[mask_double_dup_preview(df)].sort_values(['source', 'target']).head(100)
+    if preview_df.empty:
+        return None, None
     preview_df['keep'] = ~mask_double_dup(preview_df)
     action_remove_all_dups = ACTION_REMOVE_ALL_DUPLICATES.copy()
     num_in_dataset = len(df[mask_double_dup])
@@ -97,7 +91,22 @@ def mask_empty(df: pd.DataFrame) -> pd.Series:
 def preview_empty(df: pd.DataFrame) -> pd.DataFrame:
 
     preview_df = df[mask_empty(df)].sort_values(['source', 'target'])
-    return preview_df
+    if preview_df.empty:
+        return None, None
+    preview_df['keep'] = False
+    action_remove_all = ACTION_REMOVE_ALL_DUPLICATES.copy()
+    action_remove_all['text'] = f'Remove all {len(preview_df)} empties in data'
+    action_remove_all['class'] = 'btn-success'
+    actions = [ACTION_SELECT_ALL, ACTION_DESELECT_ALL, ACTION_SKIP, ACTION_SUBMIT, action_remove_all]
+
+    return preview_df, actions
+
+
+# ====================
+def remove_all_empty(df: pd.DataFrame) -> pd.DataFrame:
+
+    df = remove(df, mask_empty)
+    return df
 
 
 # === SOURCE DUPLICATE ===
