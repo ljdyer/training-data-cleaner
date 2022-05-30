@@ -111,7 +111,6 @@ def diagnose_issues(df: pd.DataFrame, issues: dict, issue_names: list) -> Tuple[
             'display_name': display_name,
             'num': len(keep(df, issues[issue_id]['mask']))
         })
-    print(issue_results)
     
     passed = [issue for issue in issue_results if issue['num'] == 0]
     failed = [issue for issue in issue_results if issue['num'] > 0]

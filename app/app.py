@@ -84,12 +84,8 @@ def edit():
         # Generate preview
         if issue_id is None:
             return render_template('edit.html')
-        elif issue_id in ['double_duplicate', 'empty']:
-            preview_df, actions = ISSUES[issue_id]['preview'](df)
-            return render_template('edit.html', issue_id=issue_id, df=preview_df,
-                           actions=actions)
         else:
-            mask = ISSUES[issue_id]['mask_preview']
+            mask = ISSUES[issue_id]['mask']
             preview_df = keep(df, mask).sort_values(['source', 'target'])
             return render_template('edit.html', issue_id=issue_id, df=preview_df)
 
@@ -97,11 +93,20 @@ def edit():
 # ====================
 @app.route('/summary')
 def summary():
-    """Render edit page"""
+    """Render summary page"""
 
     df = get_df()
     passed, failed, remaining = diagnose_issues(df, ISSUES, ISSUE_NAMES)
     return render_template('summary.html', passed=passed, failed=failed, remaining=remaining)
+
+
+# ====================
+@app.route('/source_dup')
+def source_dup():
+    """Render source duplicate page"""
+
+    df = get_df()
+    return render_template('source_dup.html')
 
 
 # ====================
@@ -110,11 +115,8 @@ def download():
     """Download current version of training data file"""
 
     df = get_df()
-    print(session['fname_root'])
     download_fname = generate_download_fname()
-    print(download_fname)
     download_fpath = get_download_fpath(download_fname)
-    print(df)
     write_excel(df, download_fpath)
 
     return send_from_directory(
@@ -130,7 +132,6 @@ def view_data():
     df = get_df()
     columns = df.columns
     # data_html = df_to_html_table(df)
-    print('yo')
     return render_template('view_data.html', columns=columns, df=df)
 
 
@@ -157,7 +158,6 @@ def handle_no_data_exception(e):
 # ====================
 @app.errorhandler(NotXlsxException)
 def handle_not_xlsx_exception(e):
-    print('raised')
     return render_template('upload.html', error_type='not_xlsx')
 
 

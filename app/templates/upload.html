@@ -33,7 +33,7 @@ $(function() {
 	});
 	myDropzone.on("queuecomplete", function(file) {
 		// Called when all files in the queue finish uploading
-		window.location = "{{ url_for('summary') }}";
+		window.location = "{{ url_for('upload_.upload', file_uploaded=True) }}";
 	});
 });
 </script>

@@ -47,7 +47,7 @@
         <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
             <ul class="navbar-nav mr-auto">
                 {% for page_id, display_name, route_id in pages %}
-                <li class="nav-item {{ 'active' if active_page == page_id else '' }}">
+                <li class="mx-1 nav-item {{ 'active' if active_page == page_id else '' }}">
                     <a class='nav-link' href="{{ url_for(route_id) }}">{{ display_name }}</a>
                 </li>
                 {% endfor %}

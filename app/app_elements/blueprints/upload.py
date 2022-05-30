@@ -36,10 +36,14 @@ def upload():
         # TODO: Validate file (type, num_columns, etc)
         df, num_removed = read_and_preprocess(fpath)
         num_remaining = len(df)
+        session['num_removed'] = num_removed
+        session['num_remaining'] = num_remaining
         save_df(df)
         return json.dumps({'success': True})
 
     else:
+        if request.args.get('file_uploaded'):
+            return render_template('upload.html', file_uploaded=True)
         return render_template('upload.html')
 
 

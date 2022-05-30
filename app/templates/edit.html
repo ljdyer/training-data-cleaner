@@ -9,23 +9,40 @@
 {% endblock %}
 
 {% block content %}
-<nav class="mx-3 nav nav-pills nav-fill d-flex align-items-center">
-    <span class="m-2 nav-text col-1"><b>Filters</b></span>
-    {% for display_name, this_issue_id in issues %}
-        <a class="m-2 nav-link btn-primary {{ 'active' if issue_id==this_issue_id }}"
-        href="{{ url_for('edit', issue_id=this_issue_id) }}" | >({{loop.index}}) {{display_name}}</a>
-    {% endfor %}
-</nav>
-{% if actions is not none %}
-<nav class="mx-3 mb-2 nav nav-pills nav-fill d-flex align-items-center">
-    <span class="m-2 nav-text col-1"><b>Actions</b></span>
-        {% for action in actions %}
-            <a class="m-2 nav-link {{ action.class}}" href="#" id="action_{{ action.id }}"
-            data-shortcut="{{ action.shortcut }}" data-action="{{ action.id }}">
-                {{ action.text }} ({{action.shortcut | title}})</a>
-        {% endfor %}
-    </nav>
-{% endif %}
+<form class="form-horizontal">
+    <div class="row mx-3 mb-3">
+        <div class="col input-group">
+            <label for="filter" class="col-2 col-form-label">Filter</label>
+            <select class="form-select form-control" aria-label="filter" id="filter">
+                <option>(None)</option>
+                {% for display_name, this_issue_id in issues %}
+                <option value="{{ this_issue_id }}" {{ 'selected' if issue_id==this_issue_id }}>{{ display_name }}</option>
+                {% endfor %}
+            </select>
+            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="scope" id="source" checked>Source
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="scope" id="target">Target
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="scope" id="either">Either
+                </label>
+                <label class="btn btn-primary btn-disabled">
+                    <input type="radio" name="scope" id="both" disabled>Both
+                </label>
+            </div>
+        </div>
+        <div class="col input-group">
+            <label for="filter" class="col-2 col-form-label">Order</label>
+            <select class="form-select form-control" aria-label="order">
+                <option>(None)</option>
+            </select>
+        </div>
+    </div>
+</form>
+
 {% if df is defined %}
     {% if df is not none %}
     <div class="mx-3 pb-1">

@@ -17,4 +17,15 @@ def provide_context_info():
     except KeyError:
         pass
 
+    try:
+        upload_info = {
+            'num_removed': session['num_removed'],
+            'num_remaining': session['num_remaining']
+        }
+        context = {**context, **upload_info}
+    except KeyError:
+        pass
+
+    print(context)
+
     return context
