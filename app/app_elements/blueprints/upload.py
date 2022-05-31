@@ -8,6 +8,7 @@ from helpers.helper import save_df, read_and_preprocess
 
 upload_ = Blueprint('upload_', __name__, template_folder='templates')
 
+
 # ====================
 @upload_.route('/')
 def index():

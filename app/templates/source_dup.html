@@ -2,8 +2,8 @@
 
 {% block imports %}
 <script type="text/javascript">
-    issueId = "{{ issue_id }}";
-    editUrl = "{{ url_for('edit') }}";
+    issueId = "{{ filter_id }}";
+    editUrl = "{{ url_for('edit_.edit') }}";
 </script>
 <script src="{{ url_for('static', filename='js/actions.js') }}"></script>
 {% endblock %}
@@ -11,9 +11,9 @@
 {% block content %}
 <nav class="mx-3 nav nav-pills nav-fill d-flex align-items-center">
     <span class="m-2 nav-text col-1"><b>Filters</b></span>
-    {% for display_name, this_issue_id in issues %}
-    <a class="m-2 nav-link btn-primary {{ 'active' if issue_id==this_issue_id }}"
-        href="{{ url_for('edit', issue_id=this_issue_id) }}" |>({{loop.index}}) {{display_name}}</a>
+    {% for display_name, this_filter_id in issues %}
+    <a class="m-2 nav-link btn-primary {{ 'active' if filter_id==this_filter_id }}"
+        href="{{ url_for('edit_.edit', filter_id=this_filter_id) }}" |>({{loop.index}}) {{display_name}}</a>
     {% endfor %}
 </nav>
 {% if actions is not none %}

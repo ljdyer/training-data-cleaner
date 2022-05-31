@@ -12,7 +12,7 @@
 {% if file_uploaded is defined %}
 <div class="m-3 text-center">
 	<p>Your data was uploaded successfully. {{ num_removed }} duplicate rows were removed. There are {{ num_remaining }} rows remaining.</p>
-	<p><a href="{{ url_for('summary') }}">Click here</a> to see a summary of your data and potential issues.</p>
+	<p><a href="{{ url_for('summary_.summary') }}">Click here</a> to see a summary of your data and potential issues.</p>
 </div>
 {% else %}
 <form action="{{ url_for('upload_.upload') }}" class="dropzone" id="dropzone" method="POST" enctype="multipart/form-data">

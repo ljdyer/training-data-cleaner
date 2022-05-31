@@ -104,12 +104,12 @@ def get_timestamp() -> str:
 def diagnose_issues(df: pd.DataFrame, issues: dict, issue_names: list) -> Tuple[list, list, int]: 
 
     issue_results = []
-    for display_name, issue_id in issue_names:
+    for display_name, filter_id in issue_names:
         issue_results.append({
-            **issues[issue_id],
-            'issue_id': issue_id,
+            **issues[filter_id],
+            'filter_id': filter_id,
             'display_name': display_name,
-            'num': len(keep(df, issues[issue_id]['mask']))
+            'num': len(keep(df, issues[filter_id]['mask']))
         })
     
     passed = [issue for issue in issue_results if issue['num'] == 0]

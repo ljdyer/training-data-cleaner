@@ -1,5 +1,5 @@
 import pandas as pd
-# from cleaner.issues import ISSUES
+# from cleaner.issues import FILTERS
 from app_elements.constants import *
 from flask import session
 

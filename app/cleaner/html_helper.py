@@ -47,7 +47,7 @@ def df_to_html_table(df: pd.DataFrame, td_classes: pd.DataFrame = None) -> str:
 def double_dup_preview(df: pd.DataFrame) -> str:
     """Generate a preview of double dupes in a pandas dataframe"""
 
-    mask = ISSUES['double_dup']['mask_preview']
+    mask = FILTERS['double_dup']['mask_preview']
     all_double_dup_df = df[mask].sort_values([df.columns[0], df.columns[1]])
     td_classes = generate_first_instance_classes(all_double_dup_df)
     table_html = df_to_html_table(all_double_dup_df, td_classes)
@@ -75,7 +75,7 @@ def generate_first_instance_classes(df: pd.DataFrame) -> pd.DataFrame:
 def source_dup_preview(df: pd.DataFrame) -> str:
     """Generate a preview of source dupes in a pandas dataframe"""
 
-    mask = ISSUES['source_dup']['mask_preview']
+    mask = FILTERS['source_dup']['mask_preview']
     source_dup_df = keep(df, mask).sort_values([df.columns[0], df.columns[1]])
     td_classes = generate_group_classes(source_dup_df)
     table_html = df_to_html_table(source_dup_df, td_classes)
@@ -113,7 +113,7 @@ def empties_preview(df: pd.DataFrame) -> str:
     def danger_if_empty(x: str) -> str:
         return 'table-danger' if x == '' else ''
 
-    mask = ISSUES['empty']['mask']
+    mask = FILTERS['empty']['mask']
     empties_df = keep(df, mask)
     td_classes = df.applymap(danger_if_empty)
     table_html = df_to_html_table(empties_df, td_classes)
@@ -124,7 +124,7 @@ def empties_preview(df: pd.DataFrame) -> str:
 def sames_preview(df: pd.DataFrame) -> str:
     """Generate a preview of sames in a pandas dataframe"""
 
-    mask = ISSUES['same']['mask']
+    mask = FILTERS['same']['mask']
     sames_df = keep(df, mask)
     table_html = df_to_html_table(sames_df)
     return table_html

@@ -41,50 +41,20 @@ ACTION_REMOVE_ALL_DUPLICATES = {
 }
 
 
-# === DOUBLE DUPLICATE ===
-
-# ====================
-def mask_double_dup(df: pd.DataFrame) -> pd.Series:
-
-    return df.duplicated(keep='first')
-
-
-# ====================
-def mask_double_dup_preview(df: pd.DataFrame) -> pd.Series:
-
-    return df.duplicated(keep=False)
-
-
-# ====================
-def preview_double_dup(df: pd.DataFrame) -> pd.DataFrame:
-
-    preview_df = df[mask_double_dup_preview(df)].sort_values(['source', 'target']).head(100)
-    if preview_df.empty:
-        return None, None
-    preview_df['keep'] = ~mask_double_dup(preview_df)
-    action_remove_all_dups = ACTION_REMOVE_ALL_DUPLICATES.copy()
-    num_in_dataset = len(df[mask_double_dup])
-    action_remove_all_dups['text'] = f'Remove all {num_in_dataset} duplicates in data'
-    action_remove_all_dups['class'] = 'btn-success'
-    actions = [action_remove_all_dups]
-    
-    return preview_df, actions
-
-
-# ====================
-def remove_all_double_dup(df: pd.DataFrame) -> pd.DataFrame:
-
-    df = remove(df, mask_double_dup)
-    return df
-
-
-
 # === EMPTY ===
 
 # ====================
 def mask_empty(df: pd.DataFrame) -> pd.Series:
 
     return df.applymap(lambda x: x == '').any(axis=1)
+
+
+# ====================
+def get_rows(df: pd.DataFrame, mask: Callable):
+
+    return df[mask_empty(df)]
+
+
 
 
 # ====================
@@ -107,20 +77,6 @@ def remove_all_empty(df: pd.DataFrame) -> pd.DataFrame:
 
     df = remove(df, mask_empty)
     return df
-
-
-# === SOURCE DUPLICATE ===
-
-# ====================
-def mask_source_dup(df: pd.DataFrame) -> pd.Series:
-
-    return df.duplicated(subset=[df.columns[0]], keep='first')
-
-
-# ====================
-def mask_source_dup_preview(df: pd.DataFrame) -> pd.Series:
-
-    return df.duplicated(subset=[df.columns[0]], keep=False)
 
 
 # ====================

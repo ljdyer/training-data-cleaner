@@ -6,7 +6,7 @@ $(function () {
     })
         // $('*[data-action]').click(function(){
         //     console.log('fire');
-        //     $.get(editUrl, {'issue_id': issueId, 'action': $(this).attr('data-action')});
+        //     $.get(editUrl, {'filter_id': issueId, 'action': $(this).attr('data-action')});
         // })
 });
 
@@ -21,7 +21,7 @@ function handleAction($e){
             return;
     }
     url = editUrl;
-    data = { 'issue_id': issueId, 'action': action };
+    data = { 'filter_id': issueId, 'action': action };
     switch (action){
         case 'remove_all', 'skip':
             url = editUrl;

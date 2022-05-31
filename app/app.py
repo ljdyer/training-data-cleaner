@@ -15,13 +15,14 @@ from flask_dropzone import Dropzone
 from flask_session import Session
 
 from app_elements.blueprints.upload import upload_
-from app_elements.constants import *
-from app_elements.context_processor import *
-from app_elements.template_filters import *
-from helpers.excel import *
-from helpers.helper import *
-from helpers.issue_def import *
-from helpers.issue_functions import *
+from app_elements.blueprints.edit import edit_
+from app_elements.blueprints.download import download_
+from app_elements.blueprints.view_data import view_data_
+from app_elements.blueprints.source_dup import source_dup_
+from app_elements.blueprints.summary import summary_
+from app_elements.context_processor import provide_context_info
+from app_elements.exceptions import NoDataException
+from app_elements.template_filters import pluralize, more_than_zero, snake_case, title_case
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -54,6 +55,11 @@ server_session = Session(app)
 
 # Routes
 app.register_blueprint(upload_)
+app.register_blueprint(edit_)
+app.register_blueprint(summary_)
+app.register_blueprint(download_)
+app.register_blueprint(source_dup_)
+app.register_blueprint(view_data_)
 # Template filters
 app.jinja_env.filters['more_than_zero'] = more_than_zero
 app.jinja_env.filters['pluralize'] = pluralize
@@ -62,78 +68,6 @@ app.jinja_env.filters['title_case'] = title_case
 app.context_processor(provide_context_info)
 
 dropzone = Dropzone(app)
-
-
-# ====================
-@app.route('/edit', methods = ['GET', 'POST'])
-def edit():
-    """Render edit page"""
-    df = get_df()
-
-    if request.method == 'POST':
-        issue_id = request.values.get('issue_id')
-        action = request.values.get('action')
-        if action == 'remove_all':
-            df = ISSUES[issue_id]['remove_all'](df)
-            save_df(df)
-            return json.dumps({'success': True})
-
-    if request.method == 'GET':
-        issue_id = request.args.get('issue_id')
-        action = request.args.get('action')
-        # Generate preview
-        if issue_id is None:
-            return render_template('edit.html')
-        else:
-            mask = ISSUES[issue_id]['mask']
-            preview_df = keep(df, mask).sort_values(['source', 'target'])
-            return render_template('edit.html', issue_id=issue_id, df=preview_df)
-
-
-# ====================
-@app.route('/summary')
-def summary():
-    """Render summary page"""
-
-    df = get_df()
-    passed, failed, remaining = diagnose_issues(df, ISSUES, ISSUE_NAMES)
-    return render_template('summary.html', passed=passed, failed=failed, remaining=remaining)
-
-
-# ====================
-@app.route('/source_dup')
-def source_dup():
-    """Render source duplicate page"""
-
-    df = get_df()
-    return render_template('source_dup.html')
-
-
-# ====================
-@app.route('/download')
-def download():
-    """Download current version of training data file"""
-
-    df = get_df()
-    download_fname = generate_download_fname()
-    download_fpath = get_download_fpath(download_fname)
-    write_excel(df, download_fpath)
-
-    return send_from_directory(
-        directory=app.config['DOWNLOAD_FOLDER'],
-        path="", filename=download_fname
-    )
-
-
-# ====================
-@app.route('/view_data')
-def view_data():
-
-    df = get_df()
-    columns = df.columns
-    # data_html = df_to_html_table(df)
-    return render_template('view_data.html', columns=columns, df=df)
-
 
 # === ERROR HANDLERS ===
 
