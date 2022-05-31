@@ -5,40 +5,56 @@
         issueId = "{{ filter_id }}";
         editUrl = "{{ url_for('edit_.edit') }}";
     </script>
-    <script src="{{ url_for('static', filename='js/actions.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/edit.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-<form class="form-horizontal">
+<form class="form-horizontal" id="settings">
     <div class="row mx-3 mb-3">
         <div class="col input-group">
             <label for="filter" class="col-2 col-form-label">Filter</label>
             <select class="form-select form-control" aria-label="filter" id="filter">
-                <option>(None)</option>
-                {% for display_name, this_filter_id in issues %}
+                <option value="none">(None)</option>
+                {% for this_filter_id, display_name in filters %}
                 <option value="{{ this_filter_id }}" {{ 'selected' if filter_id==this_filter_id }}>{{ display_name }}</option>
                 {% endfor %}
             </select>
             <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons">
                 <label class="btn btn-primary active">
-                    <input type="radio" name="scope" id="source" checked>Source
+                    <input type="radio" name="filter-scope" id="source" checked>Source
                 </label>
                 <label class="btn btn-primary">
-                    <input type="radio" name="scope" id="target">Target
+                    <input type="radio" name="filter-scope" id="target">Target
                 </label>
                 <label class="btn btn-primary">
-                    <input type="radio" name="scope" id="both">Both
+                    <input type="radio" name="filter-scope" id="both">Both
                 </label>
                 <label class="btn btn-primary btn-disabled">
-                    <input type="radio" name="scope" id="any" disabled>Any
+                    <input type="radio" name="filter-scope" id="either" disabled>Either
                 </label>
             </div>
         </div>
         <div class="col input-group">
-            <label for="filter" class="col-2 col-form-label">Order</label>
-            <select class="form-select form-control" aria-label="order">
-                <option>(None)</option>
+            <label for="order" class="col-2 col-form-label">Order</label>
+            <select class="form-select form-control" aria-label="order" id="order">
+                <option value="none">(None)</option>
             </select>
+            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="order-column" id="source" checked>Source
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="order-column" id="target">Target
+                </label>
+            </div>
+            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons">
+                <label class="btn btn-primary">
+                    <input type="radio" name="order-orientation" id="ascending">↑
+                </label>
+                <label class="btn btn-primary btn-disabled">
+                    <input type="radio" name="order-orientation" id="descending" disabled>↓
+                </label>
+            </div>
         </div>
     </div>
 </form>

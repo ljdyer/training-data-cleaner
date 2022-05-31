@@ -1,3 +1,4 @@
+from helpers.helper import get_df
 from flask import render_template, Blueprint
 
 view_data_ = Blueprint('view_data_', __name__, template_folder='templates')

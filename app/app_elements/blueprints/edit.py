@@ -1,6 +1,7 @@
 from flask import request, render_template, Blueprint
 import json
-from helpers.filters.filters import FILTERS
+from app_elements.filters.filters import FILTERS
+from app_elements.filters.preview import preview
 from helpers.helper import get_df, keep, save_df
 
 edit_ = Blueprint('edit_', __name__, template_folder='templates')
@@ -12,12 +13,18 @@ def edit():
     df = get_df()
 
     if request.method == 'POST':
-        filter_id = request.values.get('filter_id')
-        action = request.values.get('action')
-        if action == 'remove_all':
-            df = FILTERS[filter_id]['remove_all'](df)
-            save_df(df)
-            return json.dumps({'success': True})
+        print(request)
+        print(request.args)
+        filter = request.args.get('filter')
+        print(filter)
+        filter_scope = request.args.get('filter_scope')
+        order = request.args.get('order')
+        order_col = request.args.get('order_col')
+        order_orientation = request.args.get('order_orientation')
+        # USE df.to_json()
+
+        df = preview(df, filter, filter_scope, order, order_col, order_orientation)
+        return json.dumps({'success': 'true'})
 
     if request.method == 'GET':
         filter_id = request.args.get('filter_id')

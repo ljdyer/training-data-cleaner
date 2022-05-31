@@ -1,5 +1,5 @@
 import pandas as pd
-# from cleaner.issues import FILTERS
+from .filters.filters import FILTERS
 from app_elements.constants import *
 from flask import session
 
@@ -8,7 +8,8 @@ from flask import session
 def provide_context_info():
     """Context processer to provide data info to Jinja templates"""
 
-    context = {'pages': PAGES, 'issues': ISSUE_NAMES}
+    context = {'pages': PAGES}
+    context['filters'] = [(filter['id'], filter['display_name']) for filter in FILTERS]
     try:
         df = pd.DataFrame(session['df'])
         data_info = {'fname': session['fname'],

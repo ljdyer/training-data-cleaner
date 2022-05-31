@@ -7,11 +7,4 @@ PAGES = [
     ('source_dup', 'Source duplicates', 'source_dup_.source_dup')
 ]
 
-ISSUE_NAMES = [
-    ('Double duplicate', 'double_duplicate'),
-    ('Empty', 'empty'),
-    ('Source duplicate', 'source_duplicate'),
-    ('Same', 'same')
-]
-
 PREVIEW_NUM_MAX = 100
