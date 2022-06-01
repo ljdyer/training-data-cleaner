@@ -14,7 +14,6 @@
         <div class="col input-group">
             <label for="filter" class="col-2 col-form-label">Filter</label>
             <select class="form-select form-control" aria-label="filter" id="filter">
-                <option value="none">(None)</option>
                 {% for this_filter_id, display_name in filters %}
                 <option value="{{ this_filter_id }}" {{ 'selected' if filter_id==this_filter_id }}>{{ display_name }}</option>
                 {% endfor %}
@@ -30,14 +29,16 @@
                     <input type="radio" name="filter-scope" id="both">Both
                 </label>
                 <label class="btn btn-primary btn-disabled">
-                    <input type="radio" name="filter-scope" id="either" disabled>Either
+                    <input type="radio" name="filter-scope" id="either">Either
                 </label>
             </div>
         </div>
         <div class="col input-group">
             <label for="order" class="col-2 col-form-label">Order</label>
             <select class="form-select form-control" aria-label="order" id="order">
-                <option value="none">(None)</option>
+                {% for id, display_name in orders %}
+                <option value="{{ id }}">{{ display_name }}</option>
+                {% endfor %}
             </select>
             <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons">
                 <label class="btn btn-primary active">
@@ -49,40 +50,40 @@
             </div>
             <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons">
                 <label class="btn btn-primary">
-                    <input type="radio" name="order-orientation" id="ascending">↑
+                    <input type="radio" name="order-orientation" id="ascending" checked>↑
                 </label>
                 <label class="btn btn-primary btn-disabled">
-                    <input type="radio" name="order-orientation" id="descending" disabled>↓
+                    <input type="radio" name="order-orientation" id="descending">↓
                 </label>
             </div>
         </div>
     </div>
 </form>
 
-{% if df is defined %}
-    {% if df is not none %}
-    <div class="mx-3 pb-1">
-        <table class="table table-packed">
-            <thead class="thead-dark">
-                <tr>
-                    <th class="col-1">Index</th>
-                    <th class="col-5">Source</th>
-                    <th class="col-6">Target</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for index, row in df.iterrows() %}
-                <tr class="{% if row.keep %}{{ 'table-success' }} {% else %}{{ 'table-danger' }} {% endif %}">
-                    <td>{{ index }}</td>
-                    <td>{{ row.source }}</td>
-                    <td>{{ row.target }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-    {% else %}
-    <div class="m-3 text-center">No matches found.</div>
-    {% endif %}
-{% endif %}
+
+<div class="mx-3 pb-1">
+    <table class="table table-packed" id="data-table">
+        <thead class="thead-dark">
+            <tr>
+                <th class="col-1">Index</th>
+                <th class="col-5">Source</th>
+                <th class="col-6">Target</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if df is defined %}
+            {% if df is not none %}
+            {% for index, row in df.iterrows() %}
+            <tr class="{% if row.keep %}{{ 'table-success' }} {% else %}{{ 'table-danger' }} {% endif %}">
+                <td>{{ index }}</td>
+                <td>{{ row.source }}</td>
+                <td>{{ row.target }}</td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+<!-- <div class="m-3 text-center">No matches found.</div> -->
 {% endblock %}

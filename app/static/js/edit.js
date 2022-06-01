@@ -19,6 +19,24 @@ function refreshWithNewSettings(filter, filterScope, order, orderColumn, orderOr
     }
     console.log(JSON.stringify(settings))
     $.post("/edit", settings)
-        .done(function () {
+        .done(function (response) {
+            writeTable(response)
         });
+}
+
+function writeTable(dfAsJson){
+    dfAsJson = JSON.parse(dfAsJson)
+    sources = dfAsJson['source']
+    targets = dfAsJson['target']
+    tableBody = $('#data-table').find('tbody')
+    // Empty table
+    tableBody.empty();
+    // Append new rows
+    for (const [idx, source] of Object.entries(sources)) {
+        newRow = $("<tr>")
+        newRow.append($(`<td>${idx}</td>`))
+        newRow.append($(`<td>${source}</td>`))
+        newRow.append($(`<td>${targets[idx]}</td>`))
+        tableBody.append(newRow);
+    }
 }

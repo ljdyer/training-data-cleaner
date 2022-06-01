@@ -1,5 +1,6 @@
 import pandas as pd
 from .filters.filters import FILTERS
+from .filters.orders import ORDERS
 from app_elements.constants import *
 from flask import session
 
@@ -9,7 +10,9 @@ def provide_context_info():
     """Context processer to provide data info to Jinja templates"""
 
     context = {'pages': PAGES}
-    context['filters'] = [(filter['id'], filter['display_name']) for filter in FILTERS]
+    context['filters'] = [(id, filter['display_name']) for id, filter in FILTERS.items()]
+    context['orders'] = [(id, order['display_name']) for id, order in ORDERS.items()]
+
     try:
         df = pd.DataFrame(session['df'])
         data_info = {'fname': session['fname'],

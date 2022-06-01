@@ -13,18 +13,10 @@ def edit():
     df = get_df()
 
     if request.method == 'POST':
-        print(request)
-        print(request.args)
-        filter = request.args.get('filter')
-        print(filter)
-        filter_scope = request.args.get('filter_scope')
-        order = request.args.get('order')
-        order_col = request.args.get('order_col')
-        order_orientation = request.args.get('order_orientation')
-        # USE df.to_json()
-
-        df = preview(df, filter, filter_scope, order, order_col, order_orientation)
-        return json.dumps({'success': 'true'})
+        settings = request.form.to_dict(flat=True)
+        df = preview(df, settings)
+        df_json = df.to_json()
+        return df_json
 
     if request.method == 'GET':
         filter_id = request.args.get('filter_id')

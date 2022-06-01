@@ -1,15 +1,17 @@
 from .filter_funcs import *
 
-FILTERS = [
-    {
-        'id': 'empty',
-        'display_name': 'Empty',
-        'mask': mask_empty,
-        'scope_disabled': True
+FILTERS = {
+    'none': {
+        'display_name': '(None)',
+        'mask': mask_none
     },
-    {
-        'id': 'same',
+    'empty': {
+        'display_name': 'Empty',
+        'mask': mask_empty
+    },
+    'same': {        
         'display_name': 'Source = target',
-        'mask': mask_same
+        'mask': mask_same,
+        'whole_row': True
     }
-]
+}
