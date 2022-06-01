@@ -10,5 +10,4 @@ ORDERS = {
         'key': sort_key_ratio,
         'whole_row': True
     }
-
 }

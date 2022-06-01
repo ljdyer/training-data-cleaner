@@ -14,8 +14,9 @@ def edit():
 
     if request.method == 'POST':
         settings = request.form.to_dict(flat=True)
-        df = preview(df, settings)
-        df_json = df.to_json()
+        preview_df = preview(df, settings)
+        preview_df['index'] = preview_df.index
+        df_json = preview_df.to_json(orient='records')
         return df_json
 
     if request.method == 'GET':

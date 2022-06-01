@@ -27,20 +27,25 @@ def preview(df: pd.DataFrame, settings: dict) -> pd.DataFrame:
     # SORT
     order_id = settings['order']
     order = ORDERS[order_id]
+    print(order)
     # Ascending or descending?
     orientation = settings['order_orientation']
+    print(orientation)
     ascending = bool(orientation == 'ascending')
     # Get key
     key = order['key']
     if order.get('whole_row'):
-        # Apply sort_func to whole df
+        # Sort based on whole row
         preview_df['sort_key'] = key(preview_df)
-        preview_df.sort_values(by=['sort_key'], ascending=ascending, key=key)
+        print(preview_df)
+        preview_df = preview_df.sort_values(by='sort_key', ascending=ascending)
+        print(preview_df)
         preview_df = preview_df.drop(columns=['sort_key'])
+        print(preview_df)
     else:
         # Apply sort key to one column
         order_col = settings['order_col']
-        print(order_col, ascending)
+        print(key(df[order_col]))
         other_col = 'target' if order_col=='source' else 'source'
         preview_df = preview_df.sort_values(by=[order_col, other_col], ascending=ascending, key=key)
 
