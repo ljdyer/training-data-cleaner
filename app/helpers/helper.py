@@ -64,6 +64,12 @@ def save_df(df: pd.DataFrame):
 
 
 # ====================
+def save_preview_df(df: pd.DataFrame):
+
+    session['preview_df'] = df.to_dict()
+
+
+# ====================
 def drop_rows(rows_to_remove):
 
     df = get_df()
@@ -78,6 +84,12 @@ def get_df() -> pd.DataFrame:
         return pd.DataFrame(session['df'])
     except Exception as e:
         raise NoDataException
+
+
+# ====================
+def get_preview_df() -> pd.DataFrame:
+
+    return pd.DataFrame(session['preview_df'])
 
 
 # ====================

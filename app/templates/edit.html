@@ -18,7 +18,7 @@
                 <option value="{{ this_filter_id }}" {{ 'selected' if filter_id==this_filter_id }}>{{ display_name }}</option>
                 {% endfor %}
             </select>
-            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons">
+            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="filter-scope">
                 <label class="btn btn-primary active">
                     <input type="radio" name="filter-scope" id="source" checked>Source
                 </label>
@@ -28,7 +28,7 @@
                 <label class="btn btn-primary">
                     <input type="radio" name="filter-scope" id="both">Both
                 </label>
-                <label class="btn btn-primary btn-disabled">
+                <label class="btn btn-primary">
                     <input type="radio" name="filter-scope" id="either">Either
                 </label>
             </div>
@@ -40,7 +40,7 @@
                 <option value="{{ id }}">{{ display_name }}</option>
                 {% endfor %}
             </select>
-            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons">
+            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="order-col">
                 <label class="btn btn-primary active">
                     <input type="radio" name="order-column" id="source" checked>Source
                 </label>
@@ -58,30 +58,33 @@
             </div>
         </div>
     </div>
+    <div class="row mx-3">
+        <p>
+            Showing <span id='showing-from'>0</span> to <span id='showing-to'>0</span> of <span id='showing-total'>0</span> rows 
+            (<span id='num-selected'>0</span> selected for removal) | 
+            <a href="#" id="start-over">Start over (S)</a> | 
+            <a href="#" id="skip-page">Skip page (S)</a> | 
+            <a href="#" id="remove-all">Remove all (R)</a> | 
+            <a href="#" id="keep-all">Keep all (K)</a> | 
+            <a href="#" id="submit">Remove selected and save changes (Enter)</a>
+        </p>
+    </div>
+</div>
 </form>
+
 
 
 <div class="mx-3 pb-1">
     <table class="table table-packed" id="data-table">
         <thead class="thead-dark">
             <tr>
+                <th class="col-1"></th>
                 <th class="col-1">Index</th>
                 <th class="col-5">Source</th>
                 <th class="col-6">Target</th>
             </tr>
         </thead>
         <tbody>
-            {% if df is defined %}
-            {% if df is not none %}
-            {% for index, row in df.iterrows() %}
-            <tr class="{% if row.keep %}{{ 'table-success' }} {% else %}{{ 'table-danger' }} {% endif %}">
-                <td>{{ index }}</td>
-                <td>{{ row.source }}</td>
-                <td>{{ row.target }}</td>
-            </tr>
-            {% endfor %}
-            {% endif %}
-            {% endif %}
         </tbody>
     </table>
 </div>

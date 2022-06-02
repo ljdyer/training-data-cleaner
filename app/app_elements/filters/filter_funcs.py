@@ -4,6 +4,7 @@ issue_functions.py
 
 import pandas as pd
 from helpers.helper import *
+from app_elements.constants import MAX_NUM_CHARS
 
 ACTION_SELECT_ALL = {
     'id': 'select_all',
@@ -44,13 +45,13 @@ ACTION_REMOVE_ALL_DUPLICATES = {
 # === EMPTY ===
 
 # ====================
-def mask_none(col: pd.Series) -> pd.Series:
+def mask_none(df: pd.DataFrame) -> pd.Series:
 
-    return col.apply(lambda x: True)
+    return df.apply(lambda x: True, axis=1)
 
 
 # ====================
-def mask_empty(col: pd.DataFrame) -> pd.Series:
+def mask_empty(col: pd.Series) -> pd.Series:
 
     return col.apply(lambda x: x == '')
 
@@ -61,3 +62,7 @@ def mask_same(df: pd.DataFrame) -> pd.Series:
     return df.apply(lambda x: x['source'] == x['target'], axis=1)
 
 
+# ====================
+def mask_too_long(col: pd.Series) -> pd.Series:
+
+    return col.apply(lambda x: len(x) > MAX_NUM_CHARS)

@@ -1,8 +1,7 @@
-from flask import request, render_template, Blueprint
+from flask import request, render_template, Blueprint, session
 import json
-from app_elements.filters.filters import FILTERS
-from app_elements.filters.preview import preview
-from helpers.helper import get_df, keep, save_df
+from app_elements.filters.preview import generate_preview_df, get_next_n_rows, get_options, update_df
+from app_elements.constants import PREVIEW_NUM_MAX
 
 edit_ = Blueprint('edit_', __name__, template_folder='templates')
 
@@ -10,22 +9,63 @@ edit_ = Blueprint('edit_', __name__, template_folder='templates')
 @edit_.route('/edit', methods = ['GET', 'POST'])
 def edit():
     """Render edit page"""
-    df = get_df()
 
     if request.method == 'POST':
-        settings = request.form.to_dict(flat=True)
-        preview_df = preview(df, settings)
-        preview_df['index'] = preview_df.index
-        df_json = preview_df.to_json(orient='records')
-        return df_json
+        json_data = request.get_json(force=True)
+        action = json_data['action']
+
+        if action == 'new_settings':
+            settings = json_data['settings']
+            generate_preview_df(settings)
+            this_page, showing_from, showing_to, total = get_next_n_rows(PREVIEW_NUM_MAX)
+            this_page['index'] = this_page.index
+            options = get_options(settings)
+            df_json = this_page.to_json(orient='records')
+            return json.dumps({
+                'df': df_json,
+                'options': options,
+                'showing_from': showing_from,
+                'showing_to': showing_to,
+                'showing_total': total
+            })
+
+        if action == 'next_page':
+            this_page, showing_from, showing_to, total = get_next_n_rows(PREVIEW_NUM_MAX)
+            this_page['index'] = this_page.index
+            df_json = this_page.to_json(orient='records')
+            return json.dumps({
+                'df': df_json,
+                'showing_from': showing_from,
+                'showing_to': showing_to,
+                'showing_total': total
+            })
+
+        if action == 'submit':
+            remove = json_data['remove']
+            update = json_data['update']
+            update_df(remove, update)
+            this_page, showing_from, showing_to, total = get_next_n_rows(PREVIEW_NUM_MAX)
+            this_page['index'] = this_page.index
+            df_json = this_page.to_json(orient='records')
+            return json.dumps({
+                'df': df_json,
+                'showing_from': showing_from,
+                'showing_to': showing_to,
+                'showing_total': total
+            })
+
+        if action == 'start_over':
+            generate_preview_df(session['current_settings'])
+            this_page, showing_from, showing_to, total = get_next_n_rows(PREVIEW_NUM_MAX)
+            this_page['index'] = this_page.index
+            df_json = this_page.to_json(orient='records')
+            return json.dumps({
+                'df': df_json,
+                'showing_from': showing_from,
+                'showing_to': showing_to,
+                'showing_total': total
+            })
+
 
     if request.method == 'GET':
-        filter_id = request.args.get('filter_id')
-        action = request.args.get('action')
-        # Generate preview
-        if filter_id is None:
-            return render_template('edit.html')
-        else:
-            mask = FILTERS[filter_id]['mask']
-            preview_df = keep(df, mask).sort_values(['source', 'target'])
-            return render_template('edit.html', filter_id=filter_id, df=preview_df)
+        return render_template('edit.html')

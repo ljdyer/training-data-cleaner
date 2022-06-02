@@ -24,6 +24,8 @@ from app_elements.context_processor import provide_context_info
 from app_elements.exceptions import NoDataException
 from app_elements.template_filters import pluralize, more_than_zero, snake_case, title_case
 
+pd.options.mode.chained_assignment = None  # default='warn'
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 # Configure redis and secret key
