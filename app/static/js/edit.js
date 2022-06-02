@@ -2,7 +2,7 @@ $(function () {
     $("#filter, #order, input[name='filter-scope'], input[name='order-column'], input[name='order-orientation']").change(function(){
         refreshWithNewSettings();
     });
-    $('#skip-page').click(nextPage);
+    $('#skip-page').click(skipPage);
     $('#remove-all').click(removeAll);
     $('#keep-all').click(keepAll);
     $('#submit').click(submit);
@@ -35,13 +35,13 @@ function handleResponse(response){
     if ('options' in response){
         applyOptions(response.options)
     }
-    writeTable(response.df, response.showing_from)
-    updateShowingInfo(response.showing_from, response.showing_to, response.showing_total)
+    writeTable(response.df, response.showing_from);
+    updateShowingInfo(response.showing_from, response.showing_to, response.showing_total);
+    
 }
 
 function writeTable(dfAsJson, showingFrom) {
     dfAsJson = JSON.parse(dfAsJson)
-    console.log(dfAsJson)
     tableBody = $('#data-table').find('tbody')
     // Empty table
     tableBody.empty();
@@ -62,13 +62,17 @@ function writeTable(dfAsJson, showingFrom) {
 
 
 function updateShowingInfo(showingFrom, showingTo, showingTotal) {
-    $('#showing-from').text(showingFrom + 1);
+    if (showingTotal == 0){
+        $('#showing-from').text(0);
+    } else{
+        $('#showing-from').text(showingFrom + 1);
+    }
     $('#showing-to').text(showingTo + 1);
     $('#showing-total').text(showingTotal);
     lastPage = Boolean(showingTo + 1 == showingTotal)
 }
 
-function nextPage() {
+function skipPage() {
     action = 'next_page'
     data = { 'action': action }
     $.post("/edit", JSON.stringify(data))
@@ -128,4 +132,27 @@ function startOver(){
         .done(function (response) {
             handleResponse(response);
         });
+}
+
+function handleKeydown(e) {
+    keyPressed = e.key.toLowerCase();
+    $focusedElement = $(e.target)
+    let focusedTag = $focusedElement.prop("tagName");
+    if (focusedTag == 'BODY'){
+        if (keyPressed == 's'){
+            startOver();
+        } else if (keyPressed == 'p'){
+            skipPage();
+        } else if (keyPressed == 'r'){
+            removeAll();
+        } else if (keyPressed == 'k'){
+            keepAll();
+        } else if (keyPressed == 'enter'){
+            submit();
+        }
+    } else{
+        if (keyPressed == 'escape'){
+            $(e.target).blur();
+        }
+    }
 }

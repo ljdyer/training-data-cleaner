@@ -1,11 +1,9 @@
 {% extends 'main.html' %}
+{% set active_page = "edit" %}
 
 {% block imports %}
-    <script type="text/javascript">
-        issueId = "{{ filter_id }}";
-        editUrl = "{{ url_for('edit_.edit') }}";
-    </script>
     <script src="{{ url_for('static', filename='js/edit.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/shortcuts.js') }}"></script>
 {% endblock %}
 
 {% block content %}

@@ -5,7 +5,7 @@ from typing import Callable, Tuple
 import numpy as np
 import pandas as pd
 from app_elements.exceptions import NoDataException
-from flask import app, session
+from flask import current_app, session
 
 
 # ====================
@@ -101,7 +101,7 @@ def generate_download_fname():
 # ====================
 def get_download_fpath(fname):
 
-    return os.path.join(app.config['DOWNLOAD_FOLDER'], fname)
+    return os.path.join(current_app.config['DOWNLOAD_FOLDER'], fname)
 
 
 # ====================
