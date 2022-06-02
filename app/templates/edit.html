@@ -56,15 +56,26 @@
             </div>
         </div>
     </div>
-    <div class="row mx-3">
+    <div class="container d-flex justify-content-center">
+        <div class="mb-2 btn-block d-flex justify-content-center"  role="group">
+            <a class="btn btn-primary mx-2" href="#" id="start-over"><u>S</u>tart over</a>
+            <a class="btn btn-primary mx-2" href="#" id="skip-page">Ski<u>p</u> page</a>
+            <a class="btn btn-primary mx-2" href="#" id="select-all">Select <u>a</u>ll</a>
+            <a class="btn btn-primary mx-2" href="#" id="deselect-all"><u>D</u>eselect all</a>
+            <a class="btn btn-primary mx-2" href="#" id="submit">Remove selected and save changes (<u>Enter</u>)</a>
+            <a class="btn btn-danger mx-2" href="#" id="remove-all">Remove all rows matching filter (<u>X</u>)</a>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center">
         <p>
-            Showing <span id='showing-from'>0</span> to <span id='showing-to'>0</span> of <span id='showing-total'>0</span> rows 
-            (<span id='num-selected'>0</span> selected for removal) | 
-            <a href="#" id="start-over">Start over (S)</a> | 
-            <a href="#" id="skip-page">Skip page (S)</a> | 
-            <a href="#" id="remove-all">Remove all (R)</a> | 
-            <a href="#" id="keep-all">Keep all (K)</a> | 
-            <a href="#" id="submit">Remove selected and save changes (Enter)</a>
+            Showing
+                <span id='showing-from'>0</span>
+             to 
+                <span id='showing-to'>0</span>
+             of 
+                <span id='showing-total'>0</span>
+             rows
+                (<span id='num-selected'>0</span> selected for removal)</span>
         </p>
     </div>
 </div>

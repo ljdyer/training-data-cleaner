@@ -1,55 +1,48 @@
 {% extends 'main.html' %}
+{% set active_page = "source_dup" %}
 
 {% block imports %}
-<script type="text/javascript">
-    issueId = "{{ filter_id }}";
-    editUrl = "{{ url_for('edit_.edit') }}";
-</script>
-<script src="{{ url_for('static', filename='js/actions.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/source_dup.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/shortcuts.js') }}"></script>
 {% endblock %}
 
 {% block content %}
-<nav class="mx-3 nav nav-pills nav-fill d-flex align-items-center">
-    <span class="m-2 nav-text col-1"><b>Filters</b></span>
-    {% for display_name, this_filter_id in issues %}
-    <a class="m-2 nav-link btn-primary {{ 'active' if filter_id==this_filter_id }}"
-        href="{{ url_for('edit_.edit', filter_id=this_filter_id) }}" |>({{loop.index}}) {{display_name}}</a>
-    {% endfor %}
-</nav>
-{% if actions is not none %}
-<nav class="mx-3 mb-2 nav nav-pills nav-fill d-flex align-items-center">
-    <span class="m-2 nav-text col-1"><b>Actions</b></span>
-    {% for action in actions %}
-    <a class="m-2 nav-link {{ action.class}}" href="#" id="action_{{ action.id }}" data-shortcut="{{ action.shortcut }}"
-        data-action="{{ action.id }}">
-        {{ action.text }} ({{action.shortcut | title}})</a>
-    {% endfor %}
-</nav>
-{% endif %}
-{% if df is defined %}
-{% if df is not none %}
+<form class="form-horizontal" id="settings">
+    <div class="container d-flex justify-content-center">
+        <div class="mb-2 btn-block d-flex justify-content-center" role="group">
+            <a class="btn btn-primary mx-2" href="#" id="start-over"><u>S</u>tart over</a>
+            <a class="btn btn-primary mx-2" href="#" id="skip-page">Ski<u>p</u></a>
+            <a class="btn btn-primary mx-2" href="#" id="select-all">Select <u>a</u>ll</a>
+            <a class="btn btn-primary mx-2" href="#" id="deselect-all"><u>D</u>eselect all</a>
+            <a class="btn btn-primary mx-2" href="#" id="submit">Keep selected and save changes (<u>Enter</u>)</a>
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <p>
+            Showing source 
+                <span id='source-number'>0</span>
+             of 
+                <span id='num-sources'>0</span>
+        </p>
+    </div>
+</div>
+</form>
+
+
+
 <div class="mx-3 pb-1">
-    <table class="table table-packed">
+    <table class="table table-packed" id="data-table">
         <thead class="thead-dark">
             <tr>
+                <th class="col-1"></th>
                 <th class="col-1">Index</th>
                 <th class="col-5">Source</th>
                 <th class="col-6">Target</th>
             </tr>
         </thead>
         <tbody>
-            {% for index, row in df.iterrows() %}
-            <tr class="{% if row.keep %}{{ 'table-success' }} {% else %}{{ 'table-danger' }} {% endif %}">
-                <td>{{ index }}</td>
-                <td>{{ row.source }}</td>
-                <td>{{ row.target }}</td>
-            </tr>
-            {% endfor %}
         </tbody>
     </table>
 </div>
-{% else %}
-<div class="m-3 text-center">No matches found.</div>
-{% endif %}
-{% endif %}
+<!-- <div class="m-3 text-center">No matches found.</div> -->
 {% endblock %}

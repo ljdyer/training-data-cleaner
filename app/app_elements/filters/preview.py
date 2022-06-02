@@ -9,7 +9,7 @@ from helpers.helper import save_preview_df, get_df, save_df
 
 
 # ====================
-def generate_preview_df(settings: dict) -> Tuple[pd.DataFrame, dict]:
+def generate_preview_df(settings: dict) -> pd.DataFrame:
 
     session['current_settings'] = settings
     df = get_df()
@@ -57,15 +57,14 @@ def get_next_n_rows(n: int):
 
     preview_df = get_preview_df()
     total = len(preview_df)
-    showing_from = session['start_index_next']
-    if showing_from >= total:
+    if session['start_index_next'] >= total:
         preview_df = generate_preview_df(session['current_settings'])
         total = len(preview_df)
-        showing_from = 0
-        session['start_index_next'] = 0
+    showing_from = session['start_index_next']
     showing_to = min(total - 1, showing_from + n - 1)
     session['start_index_next'] = session['start_index_next'] + n
     this_page = preview_df.iloc[showing_from:showing_to+1]
+    this_page['index'] = this_page.index
     return this_page, showing_from, showing_to, total
 
 
@@ -74,14 +73,14 @@ def get_options(settings: dict) -> dict:
 
     filter = FILTERS[settings['filter']]
     filter_whole_row = bool(filter.get('whole_row'))
+    disable_remove_all = bool(filter.get('disable_remove_all'))
     order = ORDERS[settings['order']]
     order_whole_row = bool(order.get('whole_row'))
-
     options = {
         'filter_scope_disabled': filter_whole_row,
         'order_col_disabled': order_whole_row,
+        'disable_remove_all': disable_remove_all
     }
-
     return options
 
 
@@ -116,3 +115,16 @@ def update_df(rows_to_drop: list, rows_to_update: dict):
         df.loc[index]['source'] = source
         df.loc[index]['target'] = target
     save_df(df)
+
+    return len(df)
+
+
+# ====================
+def remove_all():
+
+    preview_df = get_preview_df()
+    rows_to_drop = preview_df.index.to_list()
+    df = get_df()
+    df = df.drop(rows_to_drop, axis=0)
+    save_df(df)
+    return len(df)

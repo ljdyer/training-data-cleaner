@@ -4,7 +4,8 @@ FILTERS = {
     'none': {
         'display_name': '(None)',
         'mask': mask_none,
-        'whole_row': True
+        'whole_row': True,
+        'disable_remove_all': True
     },
     'empty': {
         'display_name': 'Empty',

@@ -8,6 +8,5 @@ view_data_ = Blueprint('view_data_', __name__, template_folder='templates')
 def view_data():
 
     df = get_df()
-    columns = df.columns
-    # data_html = df_to_html_table(df)
-    return render_template('view_data.html', columns=columns, df=df)
+    df['index'] = df.index
+    return render_template('view_data.html', df=df)
