@@ -4,25 +4,25 @@ app.py
 Main program for training data cleaner
 """
 
-import json
 import os
 
 import pandas as pd
 import redis
-from flask import (Flask, redirect, render_template, request,
-                   send_from_directory, session, url_for)
+from flask import Flask, render_template
 from flask_dropzone import Dropzone
 from flask_session import Session
 
-from app_elements.blueprints.upload import upload_
-from app_elements.blueprints.edit import edit_
 from app_elements.blueprints.download import download_
-from app_elements.blueprints.view_data import view_data_
+from app_elements.blueprints.edit import edit_
 from app_elements.blueprints.source_dup import source_dup_
+from app_elements.blueprints.settings import settings_
 from app_elements.blueprints.summary import summary_
+from app_elements.blueprints.upload import upload_
+from app_elements.blueprints.view_data import view_data_
 from app_elements.context_processor import provide_context_info
 from app_elements.exceptions import NoDataException
-from app_elements.template_filters import pluralize, more_than_zero, snake_case, title_case
+from app_elements.options import OPTIONS
+from app_elements.template_filters import more_than_zero, pluralize, title_case
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
@@ -54,12 +54,16 @@ app.config.update(
     SESSION_REDIS=session_redis
 )
 server_session = Session(app)
+# Set default options
+for option_id, option in OPTIONS.items():
+    app.config[option_id] = option['default']
 
 # Routes
 app.register_blueprint(upload_)
 app.register_blueprint(edit_)
 app.register_blueprint(summary_)
 app.register_blueprint(download_)
+app.register_blueprint(settings_)
 app.register_blueprint(source_dup_)
 app.register_blueprint(view_data_)
 # Template filters

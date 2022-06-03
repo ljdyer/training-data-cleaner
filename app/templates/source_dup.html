@@ -8,13 +8,19 @@
 
 {% block content %}
 <form class="form-horizontal" id="settings">
-    <div class="container d-flex justify-content-center">
-        <div class="mb-2 btn-block d-flex justify-content-center" role="group">
+    <div class="container d-flex justify-content-center align-items-center">
+        <div class="mb-2 btn-block d-flex justify-content-center align-items-center" role="group">
             <a class="btn btn-primary mx-2" href="#" id="start-over"><u>S</u>tart over</a>
             <a class="btn btn-primary mx-2" href="#" id="skip-page">Ski<u>p</u></a>
             <a class="btn btn-primary mx-2" href="#" id="select-all">Select <u>a</u>ll</a>
             <a class="btn btn-primary mx-2" href="#" id="deselect-all"><u>D</u>eselect all</a>
             <a class="btn btn-primary mx-2" href="#" id="submit">Keep selected and save changes (<u>Enter</u>)</a>
+            <div class="form-check mx-3" display="inline">
+                <input class="form-check-input" type="checkbox" value="" id="submitImmediately">
+                <label class="form-check-label" for="submitImmediately">
+                    Submit immediately upon selection
+                </label>
+            </div>
         </div>
     </div>
     <div class="row d-flex justify-content-center">

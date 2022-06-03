@@ -2,9 +2,9 @@
 issue_functions.py
 """
 
+from flask import current_app
 import pandas as pd
 from helpers.helper import *
-from app_elements.constants import MAX_NUM_CHARS
 
 ACTION_SELECT_ALL = {
     'id': 'select_all',
@@ -65,4 +65,4 @@ def mask_same(df: pd.DataFrame) -> pd.Series:
 # ====================
 def mask_too_long(col: pd.Series) -> pd.Series:
 
-    return col.apply(lambda x: len(x) > MAX_NUM_CHARS)
+    return col.apply(lambda x: len(x) > current_app.config['MAX_NUM_CHARS'])

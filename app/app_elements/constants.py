@@ -6,6 +6,3 @@ PAGES = [
     ('edit', 'Edit data', 'edit_.edit'),
     ('source_dup', 'Source duplicates', 'source_dup_.source_dup')
 ]
-
-PREVIEW_NUM_MAX = 100
-MAX_NUM_CHARS = 200

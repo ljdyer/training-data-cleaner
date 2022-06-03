@@ -1,7 +1,6 @@
-from flask import request, render_template, Blueprint, session
+from flask import request, render_template, Blueprint, session, current_app
 import json
 from app_elements.filters.preview import generate_preview_df, get_next_n_rows, get_options, update_df, remove_all
-from app_elements.constants import PREVIEW_NUM_MAX
 
 edit_ = Blueprint('edit_', __name__, template_folder='templates')
 
@@ -33,7 +32,7 @@ def edit():
             response['df_len'] = df_len
             generate_preview_df(session['current_settings'])
             
-        this_page, showing_from, showing_to, total = get_next_n_rows(PREVIEW_NUM_MAX)
+        this_page, showing_from, showing_to, total = get_next_n_rows(current_app.config['PREVIEW_NUM_MAX'])
         df_json = this_page.to_json(orient='records')
         response = {**response, 'df': df_json, 'showing_from': showing_from, 'showing_to': showing_to, 'showing_total': total}
         return json.dumps(response)

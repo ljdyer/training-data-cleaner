@@ -13,3 +13,8 @@ def sort_key_ratio(df: pd.DataFrame) -> pd.Series:
     len_target = len_target.apply(lambda x: 0.01 if x == 0 else x)
     ratio = len_source.div(len_target)    
     return ratio
+
+
+def sort_key_index(df: pd.DataFrame) -> pd.Series:
+
+    return df.index

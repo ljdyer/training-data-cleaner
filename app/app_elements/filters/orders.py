@@ -1,6 +1,11 @@
 from .order_funcs import *
 
 ORDERS = {
+    'index': {
+        'display_name': 'Order in data file',
+        'key': sort_key_index,
+        'whole_row': True
+    },
     'alphabetical': {
         'display_name': 'A-Z',
         'key': None
@@ -13,5 +18,5 @@ ORDERS = {
         'display_name': 'Length of source relative to target',
         'key': sort_key_ratio,
         'whole_row': True
-    }
+    },
 }

@@ -43,7 +43,7 @@ function writeTable(dfAsJson) {
         tableBody.append(newRow);
         count += 1;
     }
-    tableBody.find('th,td.index').click(function () { toggleRow($(this).parent()) })
+    tableBody.find('th,td.index').click(function () { handleRowClick($(this).parent()) })
 }
 
 
@@ -67,8 +67,12 @@ function skipPage() {
         });
 }
 
-function toggleRow($row){
+function handleRowClick($row){
+    isChecked = $row.hasClass('table-success');
     $row.toggleClass('table-success');
+    if ($('#submitImmediately').is(':checked') && !isChecked){
+        submit();
+    }
 }
 
 function deselectAll(){
@@ -129,8 +133,17 @@ function handleKeydown(e) {
             deselectAll();
         } else if (keyPressed == 'enter'){
             submit();
+        } else {
+            number = parseInt(keyPressed)
+            if (Number.isInteger(number)){
+                if (0 < number && number < 10){
+                    $theRow = $($('tbody').find('tr')[number-1]);
+                    if ($theRow.length){
+                        handleRowClick($theRow)
+                    }
+                }
+            }
         }
-        // TODO: Add number keys to select rows
     } else{
         if (keyPressed == 'escape'){
             $(e.target).blur();

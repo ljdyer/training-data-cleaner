@@ -25,6 +25,8 @@
         crossorigin="anonymous"></script>
     <!-- CSS stylesheet -->
     <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+    <!-- Iconify -->
+    <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
     {% block imports %}{% endblock %}
 </head>
 
@@ -33,7 +35,7 @@
     <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
         <!-- logo and site name -->
         <a class="navbar-brand" href="#">
-            <img src="{{ url_for('static', filename='img/cleaner-white.png') }}" width="30" height="30" class="d-inline-block align-top" alt="">
+            <img src="{{ url_for('static', filename='img/cleaner-white.png') }}" class="navbar-img d-inline-block align-top" alt="">
             Training data cleaner
         </a>
         <!-- hamburger button that toggles the navbar-->
@@ -58,6 +60,12 @@
                 <a href="{{ url_for('download_.download') }}">{{ fname }}</a> | <span id="num-rows">{{ num_rows }} row{{ num_rows | pluralize }}</span>
             {% endif %}
         </span>
+        <div display="inline" class="navbar-nav">
+        <a href="{{ url_for('settings_.settings') }}" class="nav-link navbar-img ml-1 d-flex align-items-center {{ 'active' if active_page == 'settings' else '' }}">
+            <span class="iconify" data-icon="mdi:cog" style="color: inherit;" data-width="30" data-height="30"
+                data-flip="vertical"></span>
+        </a>
+        </div>
     </nav>
     <!-- page content -->
     {% block content %}{% endblock %}
