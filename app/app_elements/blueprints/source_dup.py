@@ -1,6 +1,7 @@
 from flask import render_template, Blueprint, request
-from app_elements.filters.source_dup import generate_source_dups, get_next_source_dup
-from app_elements.filters.preview import update_df
+from app_elements.helper_functions.source_dup import generate_source_dups, get_next_source_dup
+from app_elements.helper_functions.preview import update_df
+from app_elements.helper_functions.helper import get_df
 import json
 
 source_dup_ = Blueprint('source_dup_', __name__, template_folder='templates')
@@ -32,4 +33,6 @@ def source_dup():
         return json.dumps(response)
 
     if request.method == 'GET':
+        # Call get_df to trigger error if no data has been uploaded
+        df = get_df()
         return render_template('source_dup.html')

@@ -4,7 +4,7 @@ import pandas as pd
 import json
 from flask import (Blueprint, current_app, redirect, render_template, request,
                    session, url_for)
-from helpers.helper import save_df, read_and_preprocess
+from app_elements.helper_functions.helper import save_df, read_and_preprocess
 
 upload_ = Blueprint('upload_', __name__, template_folder='templates')
 

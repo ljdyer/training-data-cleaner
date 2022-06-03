@@ -1,6 +1,6 @@
 import pandas as pd
-from .filters.filters import FILTERS
-from .filters.orders import ORDERS
+from .filters import FILTERS
+from .orders import ORDERS
 from app_elements.constants import *
 from flask import session
 

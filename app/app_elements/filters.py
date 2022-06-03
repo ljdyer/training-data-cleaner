@@ -1,4 +1,4 @@
-from .filter_funcs import *
+from .helper_functions.filter_funcs import *
 
 FILTERS = {
     'none': {

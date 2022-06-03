@@ -1,4 +1,4 @@
-from .order_funcs import *
+from .helper_functions.order_funcs import *
 
 ORDERS = {
     'index': {

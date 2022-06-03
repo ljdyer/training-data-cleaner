@@ -1,6 +1,7 @@
 from flask import request, render_template, Blueprint, session, current_app
 import json
-from app_elements.filters.preview import generate_preview_df, get_next_n_rows, get_options, update_df, remove_all
+from app_elements.helper_functions.preview import generate_preview_df, get_next_n_rows, get_options, update_df, remove_all
+from app_elements.helper_functions.helper import get_df
 
 edit_ = Blueprint('edit_', __name__, template_folder='templates')
 
@@ -38,4 +39,6 @@ def edit():
         return json.dumps(response)
 
     if request.method == 'GET':
+        # Call get_df to trigger error if no data has been uploaded
+        df = get_df()
         return render_template('edit.html')
