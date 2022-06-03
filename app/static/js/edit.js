@@ -8,8 +8,22 @@ $(function () {
     $('#submit').click(submit);
     $('#start-over').click(startOver);
     $('#remove-all').click(removeAll);
+    filter = $.urlParam('filter')
+    if (filter){$('#filter').val(filter)}
+    filterScope = $.urlParam('filter_scope')
+    if (filterScope){$('#filter-scope').find(`#${filterScope}`).click()}
     refreshWithNewSettings();
 })
+
+$.urlParam = function (name) {
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results == null) {
+        return null;
+    }
+    else {
+        return decodeURI(results[1]) || 0;
+    }
+}
 
 function refreshWithNewSettings(filter, filterScope, order, orderColumn, orderOrientation){
     filter = $('#filter').find(":selected").val();

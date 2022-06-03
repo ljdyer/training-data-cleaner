@@ -7,28 +7,26 @@
 {% block content %}
 
 <fieldset class="mx-3 mb-2 px-3">
-	UNDER CONSTRUCTION
-	<legend class="px-3">Passed</legend>
-	<p class="mx-3">Your data does not contain any of the following:</p>
+	<legend class="px-3">Checks passed ({{ passed | length }})</legend>
 	<div class="row mx-3 mt-2">
-		{% for issue in passed %}
+		{% for check in passed %}
 		<div class="card mx-2 mb-4 text-white bg-success">
-			<p class="m-2">{{ issue.plural }}</p>
+			<p class="m-2">{{ check.display }}</p>
 		</div>
 		{% endfor %}
 	</div>
 </fieldset>
 
 <fieldset class="mx-3 mb-2">
-	<legend class="mx-3 px-3">Issues</legend>
+	<legend class="mx-3 px-3">Errors ({{ errors | length }})</legend>
 	<div class="row mx-3 mt-2">
-	{% for issue in failed %}
+	{% for check in errors %}
 		<div class="col-sm-4 col-md-3 mb-4 md-3 d-flex">
 			<div class="card text-white bg-danger flex-fill">
 				<div class="card-body">
-					<h5 class="card-title">Your data contains {{ issue.num }} <b>{{ issue.num | pluralize(issue.singular, issue.plural) }}</b>.</h5>
-					<p class="card-text"><b>Recommended action:</b> {{ issue.recc_action }}</p>
-					<a href="{{ url_for('edit_.edit', filter_id = issue.filter_id) }}" class="link-light card-link">Take action</a>
+					<h5 class="card-title">{{ check.display }}</h5>
+					<p>{{ check.message }}</p>
+					<a href="{{ check.link }}" class="stretched-link text-white card-link">Click to take action</a>
 				</div>
 			</div>
 		</div>

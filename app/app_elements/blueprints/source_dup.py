@@ -23,7 +23,6 @@ def source_dup():
         elif action == 'submit':
             remove = json_data['remove']
             update = json_data['update']
-            print(update)
             df_len = update_df(remove, update)
             response['df_len'] = df_len
             

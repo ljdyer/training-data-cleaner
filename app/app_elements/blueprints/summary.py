@@ -1,5 +1,6 @@
-from flask import render_template, Blueprint
+from flask import render_template, Blueprint, url_for
 from app_elements.helper_functions.helper import get_df
+from app_elements.checks import CHECKS
 
 summary_ = Blueprint('summary_', __name__, template_folder='templates')
 
@@ -10,6 +11,21 @@ def summary():
 
     # df = get_df()
     # passed, failed, remaining = diagnose_issues(df, FILTERS, ISSUE_NAMES)
+
+    # Call get_df to trigger error if no data has been uploaded
     df = get_df()
-    return render_template('summary.html')
-    # , passed=passed, failed=failed, remaining=remaining)
+    checks = []
+    for check in CHECKS:
+        result = check['func'](df)
+        link = url_for(check['link_route'], **check['link_args'])
+        checks.append({**check, **result, 'link': link})
+
+    print(checks)
+    
+    passed = [c for c in checks if c['status'] == 'pass']
+    errors = [c for c in checks if c['status'] == 'fail' and c['type'] == 'error']
+
+    print(passed)                                                
+    print(errors)
+
+    return render_template('summary.html', passed=passed, errors=errors)

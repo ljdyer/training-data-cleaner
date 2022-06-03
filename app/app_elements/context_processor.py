@@ -30,6 +30,4 @@ def provide_context_info():
     except KeyError:
         pass
 
-    print(context)
-
     return context

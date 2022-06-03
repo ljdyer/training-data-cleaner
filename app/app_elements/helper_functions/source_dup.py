@@ -6,10 +6,16 @@ from typing import Tuple
 
 
 # ====================
+def mask_source_dup(df: pd.DataFrame) -> pd.Series:
+
+    return df.duplicated(subset=['source'])
+
+
+# ====================
 def generate_source_dups() -> list:
 
     df = get_df()
-    duplicated = df[df.duplicated(subset=['source'])]
+    duplicated = df[mask_source_dup]
     source_dups = duplicated['source'].unique()
     session['start_source_next'] = 0
     session['source_dups'] = source_dups
@@ -22,15 +28,11 @@ def get_next_source_dup() -> Tuple[pd.DataFrame, int, int]:
     df = get_df()
     source_dups = session['source_dups']
     num_sources = len(source_dups)
-    print(num_sources)
-    print(session['start_source_next'])
     if session['start_source_next'] >= num_sources:
         source_dups = generate_source_dups()
         num_sources = len(source_dups)
         if num_sources == 0:
             return pd.DataFrame(), 0, 0
-    print(num_sources)
-    print(session['start_source_next'])
     source_num = session['start_source_next']
     this_source = source_dups[source_num]
     this_source_dup = df[df['source'] == this_source]
