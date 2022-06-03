@@ -16,7 +16,7 @@
                 <option value="{{ this_filter_id }}" {{ 'selected' if filter_id==this_filter_id }}>{{ display_name }}</option>
                 {% endfor %}
             </select>
-            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="filter-scope">
+            <div class="btn-group btn-group-toggle mx-2" style="display: none" data-toggle="buttons" id="filter-scope">
                 <label class="btn btn-primary active">
                     <input type="radio" name="filter-scope" id="source" checked>Source
                 </label>
@@ -38,7 +38,7 @@
                 <option value="{{ id }}">{{ display_name }}</option>
                 {% endfor %}
             </select>
-            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="order-col">
+            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons"  style="display: none" id="order-col">
                 <label class="btn btn-primary active">
                     <input type="radio" name="order-column" id="source" checked>Source
                 </label>
@@ -63,7 +63,7 @@
             <a class="btn btn-primary mx-2" href="#" id="select-all">Select <u>a</u>ll</a>
             <a class="btn btn-primary mx-2" href="#" id="deselect-all"><u>D</u>eselect all</a>
             <a class="btn btn-primary mx-2" href="#" id="submit">Remove selected and save changes (<u>Enter</u>)</a>
-            <a class="btn btn-danger mx-2" href="#" id="remove-all">Remove all rows matching filter (<u>X</u>)</a>
+            <a class="btn btn-danger mx-2 disabled" href="#" id="remove-all">Remove all rows matching filter (<u>X</u>)</a>
         </div>
     </div>
     <div class="row d-flex justify-content-center">

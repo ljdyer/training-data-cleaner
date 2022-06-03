@@ -1,6 +1,31 @@
 {% extends 'main.html' %}
 {% set active_page = "settings" %}
 
+{% block imports %}
+<script src="{{ url_for('static', filename='js/settings.js') }}"></script>
+<script src="{{ url_for('static', filename='js/shortcuts.js') }}"></script>
+{% endblock %}
+
 {% block content %}
-Settings
+<div class="container">
+<form action="{{ url_for('settings_.settings') }}" method="post">
+    <table class="mb-3">
+        {% for option_id, option in options.items() %}
+        <tr>
+            <td class="col-2 align-middle">{{ option_id }}</td>
+            <td class="col-6 align-middle">{{ option.display | safe}}</td>
+            <td class="col-2 align-middle"><input type="text" class="form-control" id="{{ option_id }}" name="{{ option_id }}" value="{{ option.current }}"></td>
+        </tr>
+        {% endfor %}
+    </table>
+    <div class="container d-flex justify-content-center">
+        <div class="mb-2 btn-block d-flex justify-content-center" role="group">
+            <button type="submit" class="disabled mx-2 btn btn-success" id="submit">Save changes (Enter)</button>
+            <a href="{{ url_for('settings_.settings') }}" class="disabled btn btn-primary mx-2" id="undo"><u>U</u>ndo changes</a>
+            <a href="{{ url_for('settings_.settings', action='restore_defaults') }}" class="btn btn-primary mx-2" id="restore"><u>R</u>estore defaults</a>
+        </div>
+    </div>
+
+</form>
+</div>
 {% endblock %}
