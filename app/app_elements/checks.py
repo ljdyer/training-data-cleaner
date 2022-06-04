@@ -41,13 +41,22 @@ CHECKS = [
         'link_route': 'edit_.edit',
         'link_args': {
             'filter': 'empty',
-            'filter_scope': 'either'}
+            'filter_scope': 'either'
+        }
+    },
+    {
+        'id': 'too_long',
+        'display': 'Long cells',
+        'type': 'error',
+        'func': check_too_long,
+        'link_route': 'edit_.edit',
+        'link_args': {
+            'filter': 'too_long',
+            'filter_scope': 'either',
+            'order': 'length',
+            'order_col': 'source'
+        }
     }
-    # 'too_long': {
-    #     'display': 'Long cells',
-    #     'type': 'warning',
-    #     'func': check_too_long
-    # },
     # 'same': {
     #     'display': 'Source = target',
     #     'type': 'warning',
