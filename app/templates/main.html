@@ -57,7 +57,7 @@
         <!-- info about currently uploaded file -->
         <span class="navbar-text">
             {% if fname %}
-                <a href="{{ url_for('download_.download') }}">{{ fname }}</a> | <span id="num-rows">{{ num_rows }} row{{ num_rows | pluralize }}</span>
+                <a href="{{ url_for('download_.download') }}">{{ fname }}</a> | <span id="num-rows">{{ num_rows }} {{ num_rows | pluralize('row', 'rows') }}</span>
             {% endif %}
         </span>
         <div display="inline" class="navbar-nav">
