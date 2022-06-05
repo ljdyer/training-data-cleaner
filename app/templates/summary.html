@@ -35,11 +35,11 @@
 </fieldset>
 
 <fieldset class="mx-3 mb-2">
-	<legend class="mx-3 px-3">Errors ({{ errors | length }})</legend>
+	<legend class="mx-3 px-3">Warnings ({{ warnings | length }})</legend>
 	<div class="row mx-3 mt-2">
-	{% for check in errors %}
+	{% for check in warnings %}
 		<div class="col-sm-4 col-md-3 mb-4 md-3 d-flex">
-			<div class="card text-white bg-danger flex-fill">
+			<div class="card text-white bg-warning flex-fill">
 				<div class="card-body">
 					<h5 class="card-title">{{ check.display }}</h5>
 					<p>{{ check.message }}</p>

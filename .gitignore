@@ -1,7 +1,11 @@
 run_redis.txt
+*/node_modules
 */redis/
 */uploads
 */downloads
+.eslintrc.json
+package-lock.json
+package.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

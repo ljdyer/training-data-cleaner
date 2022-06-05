@@ -47,7 +47,7 @@ CHECKS = [
     {
         'id': 'too_long',
         'display': 'Long cells',
-        'type': 'error',
+        'type': 'warning',
         'func': check_too_long,
         'link_route': 'edit_.edit',
         'link_args': {

@@ -24,8 +24,10 @@ def summary():
     
     passed = [c for c in checks if c['status'] == 'pass']
     errors = [c for c in checks if c['status'] == 'fail' and c['type'] == 'error']
+    warnings = [c for c in checks if c['status'] == 'fail' and c['type'] == 'warning']
 
     print(passed)                                                
     print(errors)
+    print(warnings)
 
-    return render_template('summary.html', passed=passed, errors=errors)
+    return render_template('summary.html', passed=passed, errors=errors, warnings=warnings)
