@@ -15,6 +15,24 @@ function handleResponse(response) {
     updateShowingInfo(responseParsed.source_num, responseParsed.num_sources);
 }
 
+function submit() {
+    // Get indices of selected rows
+    const remove = [];
+    $('tbody').find('tr:not(.table-success)').find('td.index').each(function () {
+        remove.push(parseInt($(this).text()));
+    });
+    const update = {};
+    $('tbody').find('tr.table-success').each(function () {
+        const idx = parseInt($(this).find('td.index').text());
+        const source = $(this).find('td.source').text();
+        const target = $(this).find('td.target').text();
+        update[idx] = [source, target];
+    });
+    const action = 'submit';
+    const data = { action, remove, update };
+    $.post('/source_dup', JSON.stringify(data)).done(handleResponse);
+}
+
 function writeTable(dfAsJson) {
     const dfParsed = JSON.parse(dfAsJson);
     const tableBody = $('#data-table').find('tbody');
@@ -35,25 +53,22 @@ function writeTable(dfAsJson) {
 }
 
 function updateShowingInfo(sourceNum, numSources) {
-    if (numSources == 0) {
+    if (numSources === 0) {
         $('#source-number').text(0);
     } else{
-        $('#source-number').text(parseInt(sourceNum) + 1);
+        $('#source-number').text(parseInt(sourceNum, 10) + 1);
     }
     $('#num-sources').text(numSources);
 }
 
 function skipPage() {
-    action = 'next_page';
-    data = { action };
-    $.post('/source_dup', JSON.stringify(data))
-        .done(function (response) {
-            handleResponse(response);
-        });
+    const action = 'next_page';
+    const data = { action };
+    $.post('/source_dup', JSON.stringify(data)).done(handleResponse);
 }
 
 function handleRowClick($row) {
-    isChecked = $row.hasClass('table-success');
+    const isChecked = $row.hasClass('table-success');
     $row.toggleClass('table-success');
     if ($('#submitImmediately').is(':checked') && !isChecked) {
         submit();
@@ -74,27 +89,6 @@ function updateNumSelected() {
     $('#num-selected').text($('tr.table-success').length);
 }
 
-function submit() {
-    // Get indices of selected rows
-    let remove = [];
-    $('tbody').find('tr:not(.table-success)').find('td.index').each(function() {
-        remove.push(parseInt($(this).text()));
-    });
-    let update = {};
-    $('tbody').find('tr.table-success').each(function() {
-        let idx = parseInt($(this).find('td.index').text());
-        let source = $(this).find('td.source').text();
-        let target = $(this).find('td.target').text();
-        update[idx] = [source, target];
-    });
-    action = 'submit';
-    data = {action, remove, update};
-    $.post('/source_dup', JSON.stringify(data))
-        .done(function (response) {
-            handleResponse(response);
-        });
-}
-
 function startOver() {
     data = { action: 'start_over'};
     $.post('/source_dup', JSON.stringify(data))
@@ -104,19 +98,19 @@ function startOver() {
     }
 
 function handleKeydown(e) {
-    keyPressed = e.key.toLowerCase();
-    $focusedElement = $(e.target);
-    let focusedTag = $focusedElement.prop('tagName');
-    if (focusedTag == 'BODY') {
-        if (keyPressed == 's') {
+    const keyPressed = e.key.toLowerCase();
+    const $focusedElement = $(e.target);
+    const focusedTag = $focusedElement.prop('tagName');
+    if (focusedTag === 'BODY') {
+        if (keyPressed === 's') {
             startOver();
-        } else if (keyPressed == 'p') {
+        } else if (keyPressed === 'p') {
             skipPage();
-        } else if (keyPressed == 'a') {
+        } else if (keyPressed === 'a') {
             selectAll();
-        } else if (keyPressed == 'd') {
+        } else if (keyPressed === 'd') {
             deselectAll();
-        } else if (keyPressed == 'enter') {
+        } else if (keyPressed === 'enter') {
             submit();
         } else {
             number = parseInt(keyPressed);
@@ -129,10 +123,8 @@ function handleKeydown(e) {
                 }
             }
         }
-    } else{
-        if (keyPressed == 'escape') {
-            $(e.target).blur();
-        }
+    } else if (keyPressed === 'escape') {
+        $(e.target).blur();
     }
 }
 
