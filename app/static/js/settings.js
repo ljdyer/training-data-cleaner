@@ -4,8 +4,6 @@ function handleKeydown(e) {
     const keyPressed = e.key.toLowerCase();
     const $focusedElement = $(e.target);
     const focusedTag = $focusedElement.prop('tagName');
-    console.log(keyPressed);
-    console.log(focusedTag)
     if (focusedTag === 'BODY') {
         if (keyPressed === 'u') {
             console.log($('#undo'));
