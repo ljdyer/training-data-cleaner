@@ -54,7 +54,8 @@ CHECKS = [
             'filter': 'too_long',
             'filter_scope': 'either',
             'order': 'length',
-            'order_col': 'source'
+            'order_col': 'source',
+            'order_orientation': 'descending'
         }
     }
     # 'same': {

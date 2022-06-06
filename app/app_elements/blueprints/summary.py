@@ -9,9 +9,6 @@ summary_ = Blueprint('summary_', __name__, template_folder='templates')
 def summary():
     """Render summary page"""
 
-    # df = get_df()
-    # passed, failed, remaining = diagnose_issues(df, FILTERS, ISSUE_NAMES)
-
     # Call get_df to trigger error if no data has been uploaded
     df = get_df()
     checks = []
@@ -19,15 +16,8 @@ def summary():
         result = check['func'](df)
         link = url_for(check['link_route'], **check['link_args'])
         checks.append({**check, **result, 'link': link})
-
-    print(checks)
-    
     passed = [c for c in checks if c['status'] == 'pass']
     errors = [c for c in checks if c['status'] == 'fail' and c['type'] == 'error']
     warnings = [c for c in checks if c['status'] == 'fail' and c['type'] == 'warning']
-
-    print(passed)                                                
-    print(errors)
-    print(warnings)
 
     return render_template('summary.html', passed=passed, errors=errors, warnings=warnings)

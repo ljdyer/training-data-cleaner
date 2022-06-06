@@ -1,5 +1,3 @@
-$(function () {
-    $(document).keydown(function (event) {
-        handleKeydown(event);
-    });
-});
+$(() => {
+    $(document).keydown((event) => { handleKeydown(event); });
+})

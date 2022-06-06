@@ -1,13 +1,13 @@
-$(function () {
-    addCellClasses();
-}); 
-
-function addCellClasses(){
+function addCellClasses() {
+    // selectorsAndClasses defined in Jinja template
+    // eslint-disable-next-line no-undef
     for (const [currentSelector, classesToAdd] of Object.entries(selectorsAndClasses)) {
-        console.log(currentSelector, classesToAdd)
-        $('.table').find(currentSelector).each(function () {
-            console.log('adding')
+        $('.table').find(currentSelector).each(() => {
             $(this).addClass(classesToAdd);
         });
     }
 }
+
+$(() => {
+    addCellClasses();
+});

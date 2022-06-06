@@ -25,7 +25,7 @@
 			<div class="card text-white bg-danger flex-fill">
 				<div class="card-body">
 					<h5 class="card-title">{{ check.display }}</h5>
-					<p>{{ check.message }}</p>
+					<p>{{ check.message | safe }}</p>
 					<a href="{{ check.link }}" class="stretched-link text-white card-link">Click to take action</a>
 				</div>
 			</div>
@@ -42,8 +42,8 @@
 			<div class="card text-white bg-warning flex-fill">
 				<div class="card-body">
 					<h5 class="card-title">{{ check.display }}</h5>
-					<p>{{ check.message }}</p>
-					<a href="{{ check.link }}" class="stretched-link text-white card-link">Click to take action</a>
+					<p>{{ check.message | safe  }}</p>
+					<a href="{{ check.link }}" class="stretched-link text-white card-link">Click to investigate</a>
 				</div>
 			</div>
 		</div>

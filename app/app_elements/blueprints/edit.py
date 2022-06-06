@@ -14,7 +14,6 @@ def edit():
         json_data = request.get_json(force=True)
         action = json_data['action']
         response = {}
-
         if action == 'new_settings':
             settings = json_data['settings']
             generate_preview_df(settings)

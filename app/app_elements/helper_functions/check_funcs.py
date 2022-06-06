@@ -48,8 +48,8 @@ def check_source_dup(df: pd.DataFrame) -> dict:
     else:
         num_sources = len(source_dups['source'].unique())
         return FAIL(
-            f"Your data contains {num_sources} source texts with more than one translation " +\
-            f"({num_duplicates} duplicate rows)."
+            f"Your data contains <b>{num_sources}</b> source texts with more than one translation " +\
+            f"(<b>{num_duplicates}</b> duplicate rows)."
         )
 
 
@@ -61,16 +61,16 @@ def check_empty(df: pd.DataFrame) -> dict:
 
     if empty_source > 0 and empty_target > 0:
         return FAIL(
-            f"Your data contains {empty_source} empty source {s_if_plural('cell', empty_source)} " +\
-            f"and {empty_target} empty target {s_if_plural('cell', empty_target)}."
+            f"Your data contains <b>{empty_source}</b> empty source {s_if_plural('cell', empty_source)} " +\
+            f"and <b>{empty_target}</b> empty target {s_if_plural('cell', empty_target)}."
         )
     elif empty_source > 0:
         return FAIL(
-            f"Your data contains {empty_source} empty source {s_if_plural('cell', empty_source)}."
+            f"Your data contains <b>{empty_source}</b> empty source {s_if_plural('cell', empty_source)}."
         )
     elif empty_target > 0:
         return FAIL(
-            f"Your data contains {empty_target} empty target {s_if_plural('cell', empty_target)}."
+            f"Your data contains <b>{empty_target}</b> empty target {s_if_plural('cell', empty_target)}."
         )
     else:
         return PASS
@@ -84,25 +84,19 @@ def check_too_long(df: pd.DataFrame) -> dict:
 
     if long_source > 0 and long_target > 0:
         return FAIL(
-            f"Your data contains {long_source} source {s_if_plural('cell', long_source)} " +\
-            f"and {long_target} target {s_if_plural('cell', long_target)} that are " +\
-            f"more than {current_app.config['MAX_NUM_CHARS']} long.<br>" +\
-            "The Google AutoML docs recommend that you \"split items into individual sentences " +\
-            "where possible\"."
+            f"Your data contains <b>{long_source}</b> source {s_if_plural('cell', long_source)} " +\
+            f"and <b>{long_target}</b> target {s_if_plural('cell', long_target)} that are " +\
+            f"more than {current_app.config['MAX_NUM_CHARS']} characters long."
         )
     elif long_source > 0:
         return FAIL(
-            f"Your data contains {long_source} source {s_if_plural('cell', long_source)} " +\
-            f"that {is_or_are(long_source)} more than {current_app.config['MAX_NUM_CHARS']} long.<br>" +\
-            "The Google AutoML docs recommend that you \"split items into individual sentences " +\
-            "where possible\"."
+            f"Your data contains <b>{long_source}</b> source {s_if_plural('cell', long_source)} " +\
+            f"that {is_or_are(long_source)} more than {current_app.config['MAX_NUM_CHARS']} characters long."
         )
     elif long_target > 0:
         return FAIL(
-            f"Your data contains {long_target} target {s_if_plural('cell', long_target)} " +\
-            f"that {is_or_are(long_target)} more than {current_app.config['MAX_NUM_CHARS']} long.<br>" +\
-            "The Google AutoML docs recommend that you \"split items into individual sentences " +\
-            "where possible\"."
+            f"Your data contains <b>{long_target}</b> target {s_if_plural('cell', long_target)} " +\
+            f"that {is_or_are(long_target)} more than {current_app.config['MAX_NUM_CHARS']} long."
         )
     else:
         return PASS
