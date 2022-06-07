@@ -1,4 +1,5 @@
-from .helper_functions.order_funcs import *
+from .helper_functions.order_funcs import (sort_key_index, sort_key_length,
+                                           sort_key_ratio)
 
 ORDERS = {
     'index': {

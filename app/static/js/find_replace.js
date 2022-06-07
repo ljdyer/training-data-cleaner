@@ -61,8 +61,9 @@ function handleResponse(response) {
 function search() {
     const action = 'search';
     const searchRegex = $('#find').val();
-    const data = { action, search_re: searchRegex };
-    console.log(data);
+    const replaceRegex = $('#replace').val();
+    const settings = { search_re: searchRegex, replace_re: replaceRegex };
+    const data = { action, settings };
     $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
 }
 

@@ -5,7 +5,7 @@ check_funcs.py
 import pandas as pd
 from app_elements.helper_functions.filter_funcs import (mask_empty, mask_same,
                                                         mask_too_long)
-from app_elements.helper_functions.source_dup import mask_source_dup
+from app_elements.helper_functions.source_dup_helper import mask_source_dup
 from flask import current_app
 
 PASS = {'status': 'pass'}

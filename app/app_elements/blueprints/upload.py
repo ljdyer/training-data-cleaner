@@ -1,10 +1,10 @@
-import os
-
-import pandas as pd
 import json
-from flask import (Blueprint, current_app, redirect, render_template, request,
-                   session, url_for)
-from app_elements.helper_functions.helper import save_df, read_and_preprocess
+
+from app_elements.helper_functions.helper import read_and_preprocess, save_df
+from app_elements.helper_functions.upload_helper import (
+    get_upload_fpath, save_fname_info_to_session)
+from flask import (Blueprint, redirect, render_template, request, session,
+                   url_for)
 
 upload_ = Blueprint('upload_', __name__, template_folder='templates')
 
@@ -46,23 +46,3 @@ def upload():
         if request.args.get('file_uploaded'):
             return render_template('upload.html', file_uploaded=True)
         return render_template('upload.html')
-
-
-# ====================
-def get_upload_fpath(fname: str):
-
-    return os.path.join(current_app.config['UPLOAD_FOLDER'], fname)
-
-
-# ====================
-def save_df(df: pd.DataFrame):
-
-    session['df'] = df.to_dict()
-
-
-# ====================
-def save_fname_info_to_session(fname: str):
-
-    session['fname'] = fname
-    session['fname_root'], session['fname_ext'] = \
-        os.path.splitext(fname)

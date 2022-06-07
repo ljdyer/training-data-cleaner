@@ -1,9 +1,12 @@
-from flask import request, render_template, Blueprint, session, current_app
 import json
-from app_elements.helper_functions.preview import generate_find_df, get_next_n_rows
-from app_elements.helper_functions.helper import get_df
 
-find_replace_ = Blueprint('find_replace_', __name__, template_folder='templates')
+from app_elements.helper_functions.helper import check_df_in_session
+from app_elements.helper_functions.preview import (generate_preview_df,
+                                                   get_next_n_rows)
+from flask import Blueprint, current_app, render_template, request
+
+find_replace_ = Blueprint('find_replace_', __name__,
+                          template_folder='templates')
 
 
 # ====================
@@ -17,8 +20,9 @@ def find_replace():
         print(action)
         response = {}
         if action == 'search':
-            search_re = json_data['search_re']
-            generate_find_df(search_re)
+            settings = json_data['settings']
+            settings['mode'] = 'find_replace'
+            generate_preview_df(settings)
         this_page, showing_from, showing_to, total = get_next_n_rows(
             current_app.config['PREVIEW_NUM_MAX']
         )
@@ -28,6 +32,5 @@ def find_replace():
         return json.dumps(response)
 
     if request.method == 'GET':
-        # Call get_df to trigger error if no data has been uploaded
-        df = get_df()
+        check_df_in_session()
         return render_template('find_replace.html')

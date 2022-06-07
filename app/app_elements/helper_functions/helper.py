@@ -9,7 +9,7 @@ from flask import current_app, session
 
 
 # ====================
-def get_num(df: pd.DataFrame, 
+def get_num(df: pd.DataFrame,
             mask: Callable[[pd.DataFrame], pd.Series]
             ) -> int:
     """Given a pandas dataframe and a mask function, return the number of rows
@@ -20,7 +20,7 @@ def get_num(df: pd.DataFrame,
 
 
 # ====================
-def keep(df: pd.DataFrame, 
+def keep(df: pd.DataFrame,
          mask: Callable[[pd.DataFrame], pd.Series]
          ) -> pd.DataFrame:
     """Given a pandas dataframe and a mask function, return only the rows of the
@@ -32,7 +32,7 @@ def keep(df: pd.DataFrame,
 
 
 # ====================
-def remove(df: pd.DataFrame, 
+def remove(df: pd.DataFrame,
            mask: Callable[[pd.DataFrame], pd.Series]
            ) -> pd.DataFrame:
     """Given a pandas dataframe and a mask function, return the dataframe that
@@ -44,7 +44,7 @@ def remove(df: pd.DataFrame,
 
 
 # ====================
-def get_num_and_remaining(df: pd.DataFrame, 
+def get_num_and_remaining(df: pd.DataFrame,
                           mask: Callable[[pd.DataFrame], pd.Series]
                           ) -> Tuple[int, int]:
     """Given a pandas dataframe and a mask function, return the number of rows
@@ -82,7 +82,14 @@ def get_df() -> pd.DataFrame:
 
     try:
         return pd.DataFrame(session['df'])
-    except Exception as e:
+    except KeyError:
+        raise NoDataException
+
+
+# ====================
+def check_df_in_session():
+
+    if 'df' not in session:
         raise NoDataException
 
 
@@ -113,7 +120,9 @@ def get_timestamp() -> str:
 
 
 # ====================
-def diagnose_issues(df: pd.DataFrame, issues: dict, issue_names: list) -> Tuple[list, list, int]: 
+def diagnose_issues(df: pd.DataFrame,
+                    issues: dict,
+                    issue_names: list) -> Tuple[list, list, int]:
 
     issue_results = []
     for display_name, filter_id in issue_names:
@@ -123,14 +132,14 @@ def diagnose_issues(df: pd.DataFrame, issues: dict, issue_names: list) -> Tuple[
             'display_name': display_name,
             'num': len(keep(df, issues[filter_id]['mask']))
         })
-    
+
     passed = [issue for issue in issue_results if issue['num'] == 0]
     failed = [issue for issue in issue_results if issue['num'] > 0]
 
     new_df = df.copy()
     for issue in failed:
         new_df = remove(new_df, issue['mask'])
-    
+
     remaining = len(new_df)
 
     return passed, failed, remaining
@@ -176,10 +185,15 @@ def read_and_preprocess(fpath: str) -> Tuple[pd.DataFrame, int]:
     # Strip leading/trailing spaces
     df = df.applymap(lambda x: x.strip())
     # Remove source+target duplicates
-    double_dup_mask = lambda df: df.duplicated(keep='first')
     num_double_dups = len(df[double_dup_mask])
     df = remove(df, double_dup_mask)
     # Rename source and target columns
     df.columns = ['source', 'target']
 
     return df, num_double_dups
+
+
+# ====================
+def double_dup_mask(df: pd.DataFrame) -> pd.Series:
+
+    return df.duplicated(keep='first')

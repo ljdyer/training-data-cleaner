@@ -1,9 +1,9 @@
 import json
 
-from app_elements.helper_functions.helper import get_df
+from app_elements.helper_functions.helper import check_df_in_session
 from app_elements.helper_functions.preview import update_df
-from app_elements.helper_functions.source_dup import (generate_source_dups,
-                                                      get_next_source_dup)
+from app_elements.helper_functions.source_dup_helper import (
+    generate_source_dups, get_next_source_dup)
 from flask import Blueprint, render_template, request
 
 source_dup_ = Blueprint('source_dup_', __name__, template_folder='templates')
@@ -37,6 +37,5 @@ def source_dup():
         return json.dumps(response)
 
     if request.method == 'GET':
-        # Call get_df to trigger error if no data has been uploaded
-        df = get_df()
+        check_df_in_session()
         return render_template('source_dup.html')

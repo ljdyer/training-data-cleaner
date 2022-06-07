@@ -4,7 +4,6 @@ issue_functions.py
 
 from flask import current_app
 import pandas as pd
-from app_elements.helper_functions.helper import *
 
 
 # ====================

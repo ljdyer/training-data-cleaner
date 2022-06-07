@@ -4,12 +4,12 @@ from app_elements.checks import CHECKS
 
 summary_ = Blueprint('summary_', __name__, template_folder='templates')
 
+
 # ====================
 @summary_.route('/summary')
 def summary():
     """Render summary page"""
 
-    # Call get_df to trigger error if no data has been uploaded
     df = get_df()
     checks = []
     for check in CHECKS:
@@ -17,7 +17,12 @@ def summary():
         link = url_for(check['link_route'], **check['link_args'])
         checks.append({**check, **result, 'link': link})
     passed = [c for c in checks if c['status'] == 'pass']
-    errors = [c for c in checks if c['status'] == 'fail' and c['type'] == 'error']
-    warnings = [c for c in checks if c['status'] == 'fail' and c['type'] == 'warning']
+    errors = [c for c in checks
+              if c['status'] == 'fail'
+              and c['type'] == 'error']
+    warnings = [c for c in checks
+                if c['status'] == 'fail'
+                and c['type'] == 'warning']
 
-    return render_template('summary.html', passed=passed, errors=errors, warnings=warnings)
+    return render_template('summary.html',
+                           passed=passed, errors=errors, warnings=warnings)

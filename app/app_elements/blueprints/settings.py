@@ -3,6 +3,7 @@ from app_elements.options import OPTIONS
 
 settings_ = Blueprint('settings_', __name__, template_folder='templates')
 
+
 # ====================
 @settings_.route('/settings', methods=['GET', 'POST'])
 def settings():
@@ -42,4 +43,3 @@ def get_default_options():
     for option in options.keys():
         options[option]['current'] = options[option]['default']
     return options
-

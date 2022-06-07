@@ -1,17 +1,36 @@
-from flask import session
-import pandas as pd
+from typing import Callable
 
-from app_elements.helper_functions.helper import get_preview_df
+import pandas as pd
+from app_elements.helper_functions.helper import (get_df, get_preview_df,
+                                                  save_df, save_preview_df)
+from flask import session
+
 from ..filters import FILTERS
 from ..orders import ORDERS
-from typing import Callable
-from app_elements.helper_functions.helper import save_preview_df, get_df, save_df
+
+
+# ====================
+def unescape_str(str_: str) -> str:
+
+    return (str_
+            .encode('latin1', 'backslashreplace')
+            .decode('unicode-escape'))
 
 
 # ====================
 def generate_preview_df(settings: dict) -> pd.DataFrame:
 
     session['current_settings'] = settings
+    if settings['mode'] == 'edit':
+        return generate_preview_df_edit()
+    elif settings['mode'] == 'find_replace':
+        return generate_preview_df_find_replace()
+
+
+# ====================
+def generate_preview_df_edit() -> pd.DataFrame:
+
+    settings = session['current_settings']
     df = get_df()
     # FILTER
     filter_id = settings['filter']
@@ -44,8 +63,9 @@ def generate_preview_df(settings: dict) -> pd.DataFrame:
     else:
         # Apply sort key to one column
         order_col = settings['order_col']
-        other_col = 'target' if order_col=='source' else 'source'
-        preview_df = preview_df.sort_values(by=[order_col, other_col], ascending=ascending, key=key)
+        other_col = 'target' if order_col == 'source' else 'source'
+        preview_df = preview_df.sort_values(by=[order_col, other_col],
+                                            ascending=ascending, key=key)
 
     session['start_index_next'] = 0
     save_preview_df(preview_df)
@@ -53,36 +73,38 @@ def generate_preview_df(settings: dict) -> pd.DataFrame:
 
 
 # ====================
-def generate_find_df(search_str: str) -> pd.DataFrame:
+def generate_preview_df_find_replace() -> pd.DataFrame:
 
-    # session['current_settings'] = settings
+    settings = session['current_settings']
     df = get_df()
-
-    print(search_str)
-    mask = df['source'].str.contains(search_str, regex=True)
-    print(mask)
+    search_re = unescape_str(settings['search_re'])
+    mask = df['source'].str.contains(search_re, regex=True)
     preview_df = df[mask]
-
     session['start_index_next'] = 0
     save_preview_df(preview_df)
     return preview_df
-
-
-
 
 
 # ====================
 def get_next_n_rows(n: int):
 
+    settings = session['current_settings']
     preview_df = get_preview_df()
     total = len(preview_df)
     if session['start_index_next'] >= total:
-        preview_df = generate_preview_df(session['current_settings'])
+        preview_df = generate_preview_df(settings)
         total = len(preview_df)
     showing_from = session['start_index_next']
     showing_to = min(total - 1, showing_from + n - 1)
     session['start_index_next'] = session['start_index_next'] + n
     this_page = preview_df.iloc[showing_from:showing_to+1]
+    if settings['mode'] == 'find_replace':
+        # TODO: Add 1 to every group to make compatible with groups
+        this_page['source'] = (this_page['source']
+                               .str.replace(f"({settings['search_re']})",
+                                            rf"<del>\1</del><ins>{settings['replace_re']}</ins>",
+                                            regex=True))
+        print(this_page)
     this_page['index'] = this_page.index
     return this_page, showing_from, showing_to, total
 
@@ -104,16 +126,20 @@ def get_options(settings: dict) -> dict:
 
 
 # ====================
-def apply_mask_func(df: pd.DataFrame, mask_func: Callable, filter_scope: str) -> pd.DataFrame:
+def apply_mask_func(df: pd.DataFrame,
+                    mask_func: Callable,
+                    filter_scope: str) -> pd.DataFrame:
 
     if filter_scope == 'source':
         mask = mask_func(df['source'])
     elif filter_scope == 'target':
         mask = mask_func(df['target'])
     elif filter_scope == 'both':
-        mask = pd.concat([mask_func(df['source']), mask_func(df['target'])], axis=1).all(axis=1)
+        mask = pd.concat([mask_func(df['source']), mask_func(df['target'])],
+                         axis=1).all(axis=1)
     elif filter_scope == 'either':
-        mask = pd.concat([mask_func(df['source']), mask_func(df['target'])], axis=1).any(axis=1)
+        mask = pd.concat([mask_func(df['source']), mask_func(df['target'])],
+                         axis=1).any(axis=1)
 
     return mask
 
