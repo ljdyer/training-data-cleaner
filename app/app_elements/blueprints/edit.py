@@ -5,8 +5,9 @@ from app_elements.helper_functions.helper import get_df
 
 edit_ = Blueprint('edit_', __name__, template_folder='templates')
 
+
 # ====================
-@edit_.route('/edit', methods = ['GET', 'POST'])
+@edit_.route('/edit', methods=['GET', 'POST'])
 def edit():
     """Render edit page"""
 
@@ -30,9 +31,10 @@ def edit():
         elif action == 'remove_all':
             df_len = remove_all()
             response['df_len'] = df_len
-            generate_preview_df(session['current_settings'])
-            
-        this_page, showing_from, showing_to, total = get_next_n_rows(current_app.config['PREVIEW_NUM_MAX'])
+            generate_preview_df(session['current_settings'])   
+        this_page, showing_from, showing_to, total = get_next_n_rows(
+            current_app.config['PREVIEW_NUM_MAX']
+        )
         df_json = this_page.to_json(orient='records')
         response = {**response, 'df': df_json, 'showing_from': showing_from, 'showing_to': showing_to, 'showing_total': total}
         return json.dumps(response)

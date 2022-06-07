@@ -19,6 +19,7 @@ from app_elements.blueprints.settings import settings_
 from app_elements.blueprints.summary import summary_
 from app_elements.blueprints.upload import upload_
 from app_elements.blueprints.view_data import view_data_
+from app_elements.blueprints.find_replace import find_replace_
 from app_elements.context_processor import provide_context_info
 from app_elements.exceptions import NoDataException
 from app_elements.options import OPTIONS
@@ -34,7 +35,8 @@ if is_prod:
     redis_host = os.environ.get('REDIS_HOST')
     redis_port = os.environ.get('REDIS_PORT')
     redis_password = os.environ.get('REDIS_PASSWORD')
-    session_redis = redis.Redis(host=redis_host, port=redis_port, password=redis_password)
+    session_redis = redis.Redis(host=redis_host, port=redis_port,
+                                password=redis_password)
     secret_key = os.environ.get('SECRET_KEY')
 else:
     # Local environment
@@ -66,6 +68,7 @@ app.register_blueprint(download_)
 app.register_blueprint(settings_)
 app.register_blueprint(source_dup_)
 app.register_blueprint(view_data_)
+app.register_blueprint(find_replace_)
 # Template filters
 app.jinja_env.filters['more_than_zero'] = more_than_zero
 app.jinja_env.filters['pluralize'] = pluralize

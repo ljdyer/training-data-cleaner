@@ -1,0 +1,77 @@
+{% extends 'main.html' %}
+{% set active_page = "find_replace" %}
+
+{% block imports %}
+    <script src="{{ url_for('static', filename='js/find_replace.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/shortcuts.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<form class="form-horizontal" id="settings">
+    <div class="row mx-3 mb-3">
+        <div class="col input-group">
+            <label for="find" class="col-2 col-form-label">Find</label>
+            <input type="text" class="form-control" aria-label="find" id="find">
+            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="filter-scope">
+                <label class="btn btn-primary active">
+                    <input type="radio" name="filter-scope" id="source" checked>Source
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="filter-scope" id="target">Target
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="filter-scope" id="both">Both
+                </label>
+                <label class="btn btn-primary">
+                    <input type="radio" name="filter-scope" id="either">Either
+                </label>
+            </div>
+        </div>
+        <div class="col input-group">
+            <label for="replace" class="col-2 col-form-label">Replace</label>
+            <input type="text" class="form-control" aria-label="find" id="find">
+        </div>
+    </div>
+    <div class="container d-flex justify-content-center">
+        <div class="mb-2 btn-block d-flex justify-content-center"  role="group">
+            <a class="btn btn-primary mx-2" href="#" id="search">Search</a>
+            <!-- <a class="btn btn-primary mx-2" href="#" id="skip-page">Ski<u>p</u> page</a>
+            <a class="btn btn-primary mx-2" href="#" id="select-all">Select <u>a</u>ll</a>
+            <a class="btn btn-primary mx-2" href="#" id="deselect-all"><u>D</u>eselect all</a>
+            <a class="btn btn-primary mx-2" href="#" id="submit">Remove selected and save changes (<u>Enter</u>)</a>
+            <a class="btn btn-danger mx-2 disabled" href="#" id="remove-all">Remove all rows matching filter (<u>X</u>)</a> -->
+        </div>
+    </div>
+    <div class="row d-flex justify-content-center">
+        <p>
+            Showing
+                <span id='showing-from'>0</span>
+             to 
+                <span id='showing-to'>0</span>
+             of 
+                <span id='showing-total'>0</span>
+             rows
+                (<span id='num-selected'>0</span> selected for removal)</span>
+        </p>
+    </div>
+</div>
+</form>
+
+
+
+<div class="mx-3 pb-1">
+    <table class="table table-packed" id="data-table">
+        <thead class="thead-dark">
+            <tr>
+                <th class="col-1"></th>
+                <th class="col-1">Index</th>
+                <th class="col-5">Source</th>
+                <th class="col-6">Target</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<!-- <div class="m-3 text-center">No matches found.</div> -->
+{% endblock %}

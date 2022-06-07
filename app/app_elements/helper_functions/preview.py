@@ -53,6 +53,25 @@ def generate_preview_df(settings: dict) -> pd.DataFrame:
 
 
 # ====================
+def generate_find_df(search_str: str) -> pd.DataFrame:
+
+    # session['current_settings'] = settings
+    df = get_df()
+
+    print(search_str)
+    mask = df['source'].str.contains(search_str, regex=True)
+    print(mask)
+    preview_df = df[mask]
+
+    session['start_index_next'] = 0
+    save_preview_df(preview_df)
+    return preview_df
+
+
+
+
+
+# ====================
 def get_next_n_rows(n: int):
 
     preview_df = get_preview_df()

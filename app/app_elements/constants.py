@@ -4,5 +4,6 @@ PAGES = [
     ('summary', 'Summary', 'summary_.summary'),
     ('view_data', 'View', 'view_data_.view_data'),
     ('edit', 'Edit data', 'edit_.edit'),
-    ('source_dup', 'Source duplicates', 'source_dup_.source_dup')
+    ('source_dup', 'Source duplicates', 'source_dup_.source_dup'),
+    ('find_replace', 'Find & replace', 'find_replace_.find_replace')
 ]

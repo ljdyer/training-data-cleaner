@@ -1,15 +1,12 @@
-function refresh() {
-    const action = 'start_over';
-    const data = { action };
-    $.post('/source_dup', JSON.stringify(data)).done(handleResponse);
-}
+// Function use before definition allowed
+/* eslint-disable no-use-before-define */
 
 function handleResponse(response) {
     const responseParsed = JSON.parse(response);
-    if ('df_len' in response) {
+    if ('df_len' in responseParsed) {
         const dfLen = responseParsed.df_len;
         const rowOrRows = parseInt(dfLen, 10) === 1 ? 'row' : 'rows';
-        $('#num-rows').text(dfLen.toString() + ' ' + rowOrRows);
+        $('#num-rows').text(`${dfLen.toString()} ${rowOrRows}`);
     }
     writeTable(responseParsed.df);
     updateShowingInfo(responseParsed.source_num, responseParsed.num_sources);
@@ -18,19 +15,27 @@ function handleResponse(response) {
 function submit() {
     // Get indices of selected rows
     const remove = [];
-    $('tbody').find('tr:not(.table-success)').find('td.index').each(function () {
-        remove.push(parseInt($(this).text()));
+    $('tbody').find('tr:not(.table-success)').find('td.index').each((index, element) => {
+        remove.push(parseInt($(element).text(), 10));
     });
     const update = {};
-    $('tbody').find('tr.table-success').each(function () {
-        const idx = parseInt($(this).find('td.index').text());
-        const source = $(this).find('td.source').text();
-        const target = $(this).find('td.target').text();
+    $('tbody').find('tr.table-success').each((index, element) => {
+        const idx = parseInt($(element).find('td.index').text(), 10);
+        const source = $(element).find('td.source').text();
+        const target = $(element).find('td.target').text();
         update[idx] = [source, target];
     });
     const action = 'submit';
     const data = { action, remove, update };
     $.post('/source_dup', JSON.stringify(data)).done(handleResponse);
+}
+
+function handleRowClick($row) {
+    const isChecked = $row.hasClass('table-success');
+    $row.toggleClass('table-success');
+    if ($('#submitImmediately').is(':checked') && !isChecked) {
+        submit();
+    }
 }
 
 function writeTable(dfAsJson) {
@@ -49,16 +54,24 @@ function writeTable(dfAsJson) {
         tableBody.append(newRow);
         count += 1;
     }
-    tableBody.find('th,td.index').click(() => { handleRowClick($(this).parent()); });
+    tableBody.find('th,td.index').on('click', (event) => {
+        handleRowClick($(event.currentTarget).parent());
+    });
 }
 
 function updateShowingInfo(sourceNum, numSources) {
     if (numSources === 0) {
         $('#source-number').text(0);
-    } else{
+    } else {
         $('#source-number').text(parseInt(sourceNum, 10) + 1);
     }
     $('#num-sources').text(numSources);
+}
+
+function refresh() {
+    const action = 'start_over';
+    const data = { action };
+    $.post('/source_dup', JSON.stringify(data)).done(handleResponse);
 }
 
 function skipPage() {
@@ -67,12 +80,8 @@ function skipPage() {
     $.post('/source_dup', JSON.stringify(data)).done(handleResponse);
 }
 
-function handleRowClick($row) {
-    const isChecked = $row.hasClass('table-success');
-    $row.toggleClass('table-success');
-    if ($('#submitImmediately').is(':checked') && !isChecked) {
-        submit();
-    }
+function updateNumSelected() {
+    $('#num-selected').text($('tr.table-success').length);
 }
 
 function deselectAll() {
@@ -85,18 +94,13 @@ function selectAll() {
     updateNumSelected();
 }
 
-function updateNumSelected() {
-    $('#num-selected').text($('tr.table-success').length);
+function startOver() {
+    const data = { action: 'start_over' };
+    $.post('/source_dup', JSON.stringify(data)).done(handleResponse);
 }
 
-function startOver() {
-    data = { action: 'start_over'};
-    $.post('/source_dup', JSON.stringify(data))
-        .done(function (response) {
-            handleResponse(response);
-        });
-    }
-
+// handleKeyDown is used in shortcuts.js
+// eslint-disable-next-line no-unused-vars
 function handleKeydown(e) {
     const keyPressed = e.key.toLowerCase();
     const $focusedElement = $(e.target);
@@ -113,10 +117,10 @@ function handleKeydown(e) {
         } else if (keyPressed === 'enter') {
             submit();
         } else {
-            number = parseInt(keyPressed);
+            const number = parseInt(keyPressed, 10);
             if (Number.isInteger(number)) {
-                if (0 < number && number < 10) {
-                    $theRow = $($('tbody').find('tr')[number-1]);
+                if (number > 0 && number < 10) {
+                    const $theRow = $($('tbody').find('tr')[number - 1]);
                     if ($theRow.length) {
                         handleRowClick($theRow);
                     }

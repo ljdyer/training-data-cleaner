@@ -21,8 +21,9 @@ may contain the following keys:
 'link': A link to the part of the app where the user can rectify the issue
 """
 
-from flask import url_for
-from app_elements.helper_functions.check_funcs import *
+from app_elements.helper_functions.check_funcs import (check_empty, check_same,
+                                                       check_source_dup,
+                                                       check_too_long)
 
 CHECKS = [
     {
@@ -57,12 +58,15 @@ CHECKS = [
             'order_col': 'source',
             'order_orientation': 'descending'
         }
+    },
+    {
+        'id': 'same',
+        'display': 'Source = target',
+        'type': 'warning',
+        'func': check_same,
+        'link_route': 'edit_.edit',
+        'link_args': {
+            'filter': 'same',
+        }
     }
-    # 'same': {
-    #     'display': 'Source = target',
-    #     'type': 'warning',
-    #     'func': check_same
-    # }
 ]
-
-
