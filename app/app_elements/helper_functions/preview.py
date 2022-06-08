@@ -7,6 +7,14 @@ from flask import session
 
 from ..filters import FILTERS
 from ..orders import ORDERS
+import html
+
+
+# ====================
+def escape_html(str_: str) -> str:
+
+    escaped = html.escape(str(str_))
+    return escaped
 
 
 # ====================
@@ -75,19 +83,18 @@ def generate_preview_df_edit() -> pd.DataFrame:
 # ====================
 def generate_preview_df_find_replace() -> pd.DataFrame:
 
-    settings = session['current_settings']
     df = get_df()
-    search_re = unescape_str(settings['search_re'])
-    regex = settings['regex']
+    settings = session['current_settings']
+    search_re = settings['search_re']
     scope = settings['scope']
-    mask = df['source'].str.contains(search_re, regex=regex)
+    mask = df['source'].str.contains(search_re, regex=True)
     if scope == 'source':
-        mask = df['source'].str.contains(search_re, regex=regex)
+        mask = df['source'].str.contains(search_re, regex=True)
     elif scope == 'target':
-        mask = df['target'].str.contains(search_re, regex=regex)
+        mask = df['target'].str.contains(search_re, regex=True)
     else:
-        source_mask = df['source'].str.contains(search_re, regex=regex)
-        target_mask = df['target'].str.contains(search_re, regex=regex)
+        source_mask = df['source'].str.contains(search_re, regex=True)
+        target_mask = df['target'].str.contains(search_re, regex=True)
         if scope == 'both':
             mask = pd.concat([source_mask, target_mask], axis=1).all(axis=1)
         elif scope == 'either':
@@ -111,22 +118,19 @@ def get_next_n_rows(n: int):
     showing_to = min(total - 1, showing_from + n - 1)
     session['start_index_next'] = session['start_index_next'] + n
     this_page = preview_df.iloc[showing_from:showing_to+1]
+    this_page = this_page.applymap(escape_html)
+    # Find/replace preview
     if settings['mode'] == 'find_replace':
         scope = settings['scope']
         search_re = settings['search_re']
         replace_re = settings['replace_re']
         regex = settings['regex']
-        print(scope)
         if scope != 'target':
             this_page['source'] = highlight_find_replace(this_page['source'],
-                                                         search_re,
-                                                         replace_re,
-                                                         regex)
+                                                         search_re, replace_re, regex)
         if scope != 'source':
             this_page['target'] = highlight_find_replace(this_page['target'],
-                                                         search_re,
-                                                         replace_re,
-                                                         regex)
+                                                         search_re, replace_re, regex)
     this_page['index'] = this_page.index
     return this_page, showing_from, showing_to, total
 
@@ -137,14 +141,35 @@ def highlight_find_replace(col: pd.Series,
                            replace_re: str,
                            regex: bool) -> pd.Series:
 
-    print(search_re)
-    print(replace_re)
-    print(regex)
+    if regex:
+        # Increment all groups in replace regex (\1, \2, etc) by
+        # 1 since \1 is used for preview.
+        replace_re = increment_groups_by_1(replace_re)
 
-    # TODO: Add 1 to every group to make compatible with RegEx groups
-    return col.str.replace(f"({search_re})",
-                           rf"<del>\1</del><ins>{replace_re}</ins>",
-                           regex=regex)
+    return col.str.replace(
+        rf"({search_re})",
+        rf"<del>\1</del><ins>{replace_re}</ins>",
+        regex=True
+    )
+
+
+# ====================
+def increment_groups_by_1(regex: str) -> str:
+
+    if regex == '':
+        return ''
+    old = list(regex)
+    new = []
+    new.append(old.pop(0))
+    while old:
+        next = old.pop(0)
+        if new[len(new) - 1] == '\\' and next.isnumeric():
+            new.append(str(int(next) + 1))
+        else:
+            new.append(next)
+    incremented = ''.join(new)
+    print(incremented)
+    return incremented
 
 
 # ====================
@@ -211,3 +236,24 @@ def remove_all():
     df = df.drop(rows_to_drop, axis=0)
     save_df(df)
     return len(df)
+
+
+# ====================
+def replace_all():
+
+    df = get_df()
+    settings = session['current_settings']
+    assert settings['mode'] == 'find_replace'
+    scope = settings['scope']
+    search_re = settings['search_re']
+    replace_re = settings['replace_re']
+    regex = settings['regex']
+    if scope != 'target':
+        df['source'] = df['source'].str.replace(
+            search_re, replace_re, regex=regex
+        )
+    if scope != 'source':
+        df['target'] = df['target'].str.replace(
+            search_re, replace_re, regex=regex
+        )
+    save_df(df)

@@ -66,11 +66,14 @@ function preview() {
     // eslint-disable-next-line camelcase
     const replace_re = $('#replace').val();
     const scope = $("input[name='scope']").filter(':checked').attr('id');
-    const regex = $('regex').is(':checked');
-    // eslint-disable-next-line camelcase
-    const settings = { search_re, replace_re, scope, regex };
+    const regex = $('#regex').is(':checked');
+    const settings = {
+        // eslint-disable-next-line camelcase
+        search_re, replace_re, scope, regex,
+    };
     const data = { action, settings };
     $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
+    $('#skip-page, #select-all, #deselect-all, #replace-remove, #replace-leave, #replace-all, #remove-all').removeClass('disabled');
 }
 
 // function applyOptions(options) {
@@ -84,21 +87,33 @@ function preview() {
 //     updateNumSelected();
 // }
 
-// function deselectAll() {
-//     $('tbody').find('tr').removeClass('table-secondary');
-//     updateNumSelected();
-// }
+function replaceAll() {
+    const action = 'replace_all';
+    const data = { action };
+    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
+    updateNumSelected();
+}
 
-// function selectAll() {
-//     $('tbody').find('tr').addClass('table-secondary');
-//     updateNumSelected();
-// }
+function deselectAll() {
+    $('tbody').find('tr').removeClass('table-secondary');
+    updateNumSelected();
+}
 
-// function skipPage() {
-//     const action = 'next_page';
-//     const data = { action };
-//     $.post('/edit', JSON.stringify(data)).done(handleResponse);
-// }
+function selectAll() {
+    $('tbody').find('tr').addClass('table-secondary');
+    updateNumSelected();
+}
+
+function skipPage() {
+    const action = 'next_page';
+    const data = { action };
+    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
+}
+
+function removeAll() {
+    const data = { action: 'remove_all' };
+    $.post('/edit', JSON.stringify(data)).done(handleResponse);
+}
 
 // function submit() {
 //     // Get indices of selected rows
@@ -154,12 +169,24 @@ function preview() {
 // }
 
 $(() => {
+    $('#find, #replace').on('input', () => {
+        $('#skip-page, #select-all, #deselect-all, #replace-remove, #replace-leave, #replace-all, #remove-all').addClass('disabled');
+    });
+    $('#source, #target, #both, #either').on('click', () => {
+        $('#skip-page, #select-all, #deselect-all, #replace-remove, #replace-leave, #replace-all, #remove-all').addClass('disabled');
+    });
+    $('#regex').on('change', () => {
+        $('#skip-page, #select-all, #deselect-all, #replace-remove, #replace-leave, #replace-all, #remove-all').addClass('disabled');
+    });
     $('#preview').on('click', preview);
-    // $('#skip-page').click(skipPage);
-    // $('#select-all').click(selectAll);
-    // $('#deselect-all').click(deselectAll);
+    $('#skip-page').on('click', skipPage);
+    $('#select-all').on('click', selectAll);
+    $('#deselect-all').on('click', deselectAll);
+    $('#remove-all').on('click', removeAll);
+    $('#replace-all').on('click', replaceAll);
     // $('#submit').click(submit);
     // $('#start-over').click(startOver);
+
     // $('#remove-all').click(removeAll);
     // const filter = $.urlParam('filter');
     // if (filter) { $('#filter').val(filter); }

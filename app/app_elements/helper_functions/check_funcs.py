@@ -85,7 +85,7 @@ def check_too_long(df: pd.DataFrame) -> dict:
         long_cell_strings.append(f"<b>{long_source}</b> source " +
                                  s_if_plural('cell', long_source))
     if long_target > 0:
-        long_cell_strings.append(f"<b>{long_target}</b> source " +
+        long_cell_strings.append(f"<b>{long_target}</b> target " +
                                  s_if_plural('cell', long_target))
     if long_source > 0 and long_target > 0:
         return FAIL(

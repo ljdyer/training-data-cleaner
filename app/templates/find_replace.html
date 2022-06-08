@@ -40,14 +40,14 @@
     </div>
     <div class="d-flex justify-content-center">
         <div class="mb-2 btn-block d-flex justify-content-center"  role="group">
-            <a class="btn btn-primary mx-2" href="#" id="preview">Preview</a>
+            <a class="btn btn-primary mx-2" href="#" id="preview">Preview/start over</a>
             <a class="btn btn-primary mx-2 disabled" href="#" id="skip-page">Ski<u>p</u> page</a>
             <a class="btn btn-primary mx-2 disabled" href="#" id="select-all">Select <u>a</u>ll</a>
             <a class="btn btn-primary mx-2 disabled" href="#" id="deselect-all"><u>D</u>eselect all</a>
-            <a class="btn btn-primary mx-2 disabled" href="#" id="replace-remove">Replace/save unselected and remove selected (<u>Enter</u>)</a>
-            <a class="btn btn-primary mx-2 disabled" href="#" id="replace-leave">Replace/save unselected and leave selected (<u>Enter</u>)</a>
-            <a class="btn btn-danger mx-2 disabled" href="#" id="replace-all">Replace all matches in data (<u>R</u>)</a>
-            <a class="btn btn-danger mx-2 disabled" href="#" id="remove-all">Remove all rows matching search term (<u>X</u>)</a>
+            <a class="btn btn-primary mx-2 disabled" href="#" id="replace-remove">Replace/save unselected and remove selected</a>
+            <a class="btn btn-primary mx-2 disabled" href="#" id="replace-leave">Replace/save unselected and leave selected</a>
+            <a class="btn btn-danger mx-2 disabled" href="#" id="replace-all">Replace all matches (<u>R</u>)</a>
+            <a class="btn btn-danger mx-2 disabled" href="#" id="remove-all">Remove all rows in data (<u>X</u>)</a>
         </div>
     </div>
     <div class="row d-flex justify-content-center">
@@ -59,13 +59,11 @@
              of 
                 <span id='showing-total'>0</span>
              rows
-                (<span id='num-selected'>0</span> selected for removal)</span>
+                (<span id='num-selected'>0</span> selected)</span>
         </p>
     </div>
 </div>
 </form>
-
-
 
 <div class="mx-3 pb-1">
     <table class="table table-packed" id="data-table">
@@ -81,5 +79,4 @@
         </tbody>
     </table>
 </div>
-<!-- <div class="m-3 text-center">No matches found.</div> -->
 {% endblock %}
