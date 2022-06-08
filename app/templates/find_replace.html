@@ -12,34 +12,42 @@
         <div class="col input-group">
             <label for="find" class="col-2 col-form-label">Find</label>
             <input type="text" class="form-control" aria-label="find" id="find">
-            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="filter-scope">
+            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="scope">
                 <label class="btn btn-primary active">
-                    <input type="radio" name="filter-scope" id="source" checked>Source
+                    <input type="radio" name="scope" id="source" checked>Source
                 </label>
                 <label class="btn btn-primary">
-                    <input type="radio" name="filter-scope" id="target">Target
+                    <input type="radio" name="scope" id="target">Target
                 </label>
                 <label class="btn btn-primary">
-                    <input type="radio" name="filter-scope" id="both">Both
+                    <input type="radio" name="scope" id="both">Both
                 </label>
                 <label class="btn btn-primary">
-                    <input type="radio" name="filter-scope" id="either">Either
+                    <input type="radio" name="scope" id="either">Either
                 </label>
             </div>
+        </div>
+        <div class="form-check mx-3 d-flex align-items-center" display="inline">
+            <input class="form-check-input" type="checkbox" id="regex">
+            <label class="form-check-label" for="regex">
+                Use RegEx
+            </label>
         </div>
         <div class="col input-group">
             <label for="replace" class="col-2 col-form-label">Replace</label>
             <input type="text" class="form-control" aria-label="replace" id="replace">
         </div>
     </div>
-    <div class="container d-flex justify-content-center">
+    <div class="d-flex justify-content-center">
         <div class="mb-2 btn-block d-flex justify-content-center"  role="group">
-            <a class="btn btn-primary mx-2" href="#" id="search">Search</a>
-            <!-- <a class="btn btn-primary mx-2" href="#" id="skip-page">Ski<u>p</u> page</a>
-            <a class="btn btn-primary mx-2" href="#" id="select-all">Select <u>a</u>ll</a>
-            <a class="btn btn-primary mx-2" href="#" id="deselect-all"><u>D</u>eselect all</a>
-            <a class="btn btn-primary mx-2" href="#" id="submit">Remove selected and save changes (<u>Enter</u>)</a>
-            <a class="btn btn-danger mx-2 disabled" href="#" id="remove-all">Remove all rows matching filter (<u>X</u>)</a> -->
+            <a class="btn btn-primary mx-2" href="#" id="preview">Preview</a>
+            <a class="btn btn-primary mx-2 disabled" href="#" id="skip-page">Ski<u>p</u> page</a>
+            <a class="btn btn-primary mx-2 disabled" href="#" id="select-all">Select <u>a</u>ll</a>
+            <a class="btn btn-primary mx-2 disabled" href="#" id="deselect-all"><u>D</u>eselect all</a>
+            <a class="btn btn-primary mx-2 disabled" href="#" id="replace-remove">Replace/save unselected and remove selected (<u>Enter</u>)</a>
+            <a class="btn btn-primary mx-2 disabled" href="#" id="replace-leave">Replace/save unselected and leave selected (<u>Enter</u>)</a>
+            <a class="btn btn-danger mx-2 disabled" href="#" id="replace-all">Replace all matches in data (<u>R</u>)</a>
+            <a class="btn btn-danger mx-2 disabled" href="#" id="remove-all">Remove all rows matching search term (<u>X</u>)</a>
         </div>
     </div>
     <div class="row d-flex justify-content-center">

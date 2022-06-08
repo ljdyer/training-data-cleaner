@@ -58,11 +58,17 @@ function handleResponse(response) {
     updateShowingInfo(showingFrom, showingTo, showingTotal);
 }
 
-function search() {
-    const action = 'search';
-    const searchRegex = $('#find').val();
-    const replaceRegex = $('#replace').val();
-    const settings = { search_re: searchRegex, replace_re: replaceRegex };
+function preview() {
+    // Snake case used for settings passed to Flask app
+    const action = 'preview';
+    // eslint-disable-next-line camelcase
+    const search_re = $('#find').val();
+    // eslint-disable-next-line camelcase
+    const replace_re = $('#replace').val();
+    const scope = $("input[name='scope']").filter(':checked').attr('id');
+    const regex = $('regex').is(':checked');
+    // eslint-disable-next-line camelcase
+    const settings = { search_re, replace_re, scope, regex };
     const data = { action, settings };
     $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
 }
@@ -86,24 +92,6 @@ function search() {
 // function selectAll() {
 //     $('tbody').find('tr').addClass('table-secondary');
 //     updateNumSelected();
-// }
-
-// function refreshWithNewSettings() {
-//     const filter = $('#filter').find(':selected').val();
-//     const filterScope = $("input[name='filter-scope']").filter(':checked').attr('id');
-//     const order = $('#order').find(':selected').val();
-//     const orderColumn = $("input[name='order-column']").filter(':checked').attr('id');
-//     const orderOrientation = $("input[name='order-orientation']").filter(':checked').attr('id');
-//     const settings = {
-//         filter,
-//         filter_scope: filterScope,
-//         order,
-//         order_col: orderColumn,
-//         order_orientation: orderOrientation,
-//     };
-//     const action = 'new_settings';
-//     const data = { action, settings };
-//     $.post('/edit', JSON.stringify(data)).done(handleResponse);
 // }
 
 // function skipPage() {
@@ -166,7 +154,7 @@ function search() {
 // }
 
 $(() => {
-    $('#search').click(search);
+    $('#preview').on('click', preview);
     // $('#skip-page').click(skipPage);
     // $('#select-all').click(selectAll);
     // $('#deselect-all').click(deselectAll);

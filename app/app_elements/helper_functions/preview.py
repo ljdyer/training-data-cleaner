@@ -78,7 +78,20 @@ def generate_preview_df_find_replace() -> pd.DataFrame:
     settings = session['current_settings']
     df = get_df()
     search_re = unescape_str(settings['search_re'])
-    mask = df['source'].str.contains(search_re, regex=True)
+    regex = settings['regex']
+    scope = settings['scope']
+    mask = df['source'].str.contains(search_re, regex=regex)
+    if scope == 'source':
+        mask = df['source'].str.contains(search_re, regex=regex)
+    elif scope == 'target':
+        mask = df['target'].str.contains(search_re, regex=regex)
+    else:
+        source_mask = df['source'].str.contains(search_re, regex=regex)
+        target_mask = df['target'].str.contains(search_re, regex=regex)
+        if scope == 'both':
+            mask = pd.concat([source_mask, target_mask], axis=1).all(axis=1)
+        elif scope == 'either':
+            mask = pd.concat([source_mask, target_mask], axis=1).any(axis=1)
     preview_df = df[mask]
     session['start_index_next'] = 0
     save_preview_df(preview_df)
@@ -99,14 +112,39 @@ def get_next_n_rows(n: int):
     session['start_index_next'] = session['start_index_next'] + n
     this_page = preview_df.iloc[showing_from:showing_to+1]
     if settings['mode'] == 'find_replace':
-        # TODO: Add 1 to every group to make compatible with groups
-        this_page['source'] = (this_page['source']
-                               .str.replace(f"({settings['search_re']})",
-                                            rf"<del>\1</del><ins>{settings['replace_re']}</ins>",
-                                            regex=True))
-        print(this_page)
+        scope = settings['scope']
+        search_re = settings['search_re']
+        replace_re = settings['replace_re']
+        regex = settings['regex']
+        print(scope)
+        if scope != 'target':
+            this_page['source'] = highlight_find_replace(this_page['source'],
+                                                         search_re,
+                                                         replace_re,
+                                                         regex)
+        if scope != 'source':
+            this_page['target'] = highlight_find_replace(this_page['target'],
+                                                         search_re,
+                                                         replace_re,
+                                                         regex)
     this_page['index'] = this_page.index
     return this_page, showing_from, showing_to, total
+
+
+# ====================
+def highlight_find_replace(col: pd.Series,
+                           search_re: str,
+                           replace_re: str,
+                           regex: bool) -> pd.Series:
+
+    print(search_re)
+    print(replace_re)
+    print(regex)
+
+    # TODO: Add 1 to every group to make compatible with RegEx groups
+    return col.str.replace(f"({search_re})",
+                           rf"<del>\1</del><ins>{replace_re}</ins>",
+                           regex=regex)
 
 
 # ====================

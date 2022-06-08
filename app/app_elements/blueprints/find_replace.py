@@ -19,7 +19,7 @@ def find_replace():
         action = json_data['action']
         print(action)
         response = {}
-        if action == 'search':
+        if action == 'preview':
             settings = json_data['settings']
             settings['mode'] = 'find_replace'
             generate_preview_df(settings)
