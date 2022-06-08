@@ -14,7 +14,7 @@ Data cleaning is the process of removing and editing rows in the training data f
 
 https://training-data-cleaner.herokuapp.com/
 
-Test dataset: [here](test_data/data.xlsx)
+Test dataset: [here](app/test_data/data.xlsx)
 
 ## References
 
