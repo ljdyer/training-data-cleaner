@@ -14,7 +14,16 @@ Data cleaning is the process of removing and editing rows in the training data f
 
 https://training-data-cleaner.herokuapp.com/
 
-Test dataset: [here](app/test_data/data.xlsx)
+(More documentation to follow, but it should be possible to understand the basic functionality using the sample datasets below for now.)
+
+### Sample datasets
+
+The following sample datasets are provided in this repo for use when trying out the tool:
+
+| Dataset  | Description | 
+| ------------- | ------------- |
+| [EN-ES TED Talks sample](app/test_data/ted_es_en_short.xlsx)  | A sample of 20,000 rows from the TED2013 v1.1 dataset for EN-ES from [Orpus](https://opus.nlpl.eu/index.php), with duplicate rows added and some cell content deleted to demonstrate all of the checks currently implemented in the tool with minimal loading time. |
+| [EN-ES TED Talks all](app/test_data/ted_es_en.xlsx)  | All 156,698 rows of the TED2013 v1.1 dataset for EN-ES [Orpus](https://opus.nlpl.eu/index.php), to demonstrate the tool's relevance to real-life datasets. Some views may take some time to load. Loading animations, etc. will be added in a future version so please be patient for now! |
 
 ## References
 

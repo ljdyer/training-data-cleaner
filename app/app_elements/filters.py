@@ -1,6 +1,32 @@
-from .helper_functions.filter_funcs import (mask_empty, mask_none, mask_same,
-                                            mask_too_long)
+from flask import current_app
+import pandas as pd
 
+
+# ====================
+def mask_none(df: pd.DataFrame) -> pd.Series:
+
+    return df.apply(lambda x: True, axis=1)
+
+
+# ====================
+def mask_empty(col: pd.Series) -> pd.Series:
+
+    return col.apply(lambda x: x == '')
+
+
+# ====================
+def mask_same(df: pd.DataFrame) -> pd.Series:
+
+    return df.apply(lambda x: x['source'] == x['target'], axis=1)
+
+
+# ====================
+def mask_too_long(col: pd.Series) -> pd.Series:
+
+    return col.apply(lambda x: len(x) > current_app.config['MAX_NUM_CHARS'])
+
+
+# ====================
 FILTERS = {
     'none': {
         'display_name': '(None)',

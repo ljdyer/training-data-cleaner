@@ -1,13 +1,3 @@
-$.urlParam = function urlParam(name) {
-    // Regex escape required
-    // eslint-disable-next-line no-useless-escape
-    const results = new RegExp(`[\?&]${name}=([^&#]*)`).exec(window.location.href);
-    if (results == null) {
-        return null;
-    }
-    return decodeURI(results[1]) || 0;
-};
-
 function updateNumSelected() {
     $('#num-selected').text($('tr.table-secondary').length);
 }
