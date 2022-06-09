@@ -42,7 +42,9 @@ CHECKS = [
         'link_route': 'edit_.edit',
         'link_args': {
             'filter': 'empty',
-            'filter_scope': 'either'
+            'filter_scope': 'either',
+            'order': 'index',
+            'order_orientation': 'ascending'
         }
     },
     {
@@ -66,7 +68,10 @@ CHECKS = [
         'func': check_same,
         'link_route': 'edit_.edit',
         'link_args': {
-            'filter': 'same',
+            'filter': 'empty',
+            'filter_scope': 'either',
+            'order': 'index',
+            'order_orientation': 'ascending'
         }
     }
 ]

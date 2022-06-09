@@ -49,4 +49,21 @@ def edit():
 
     if request.method == 'GET':
         check_df_in_session()
-        return render_template('edit.html')
+        if request.args.get('filter'):
+            return render_template(
+                'edit.html',
+                filter=request.args.get('filter'),
+                filter_scope=request.args.get('filter_scope'),
+                order=request.args.get('order'),
+                order_col=request.args.get('order_col'),
+                order_orientation=request.args.get('order_orientation')
+            )
+        else:
+            return render_template(
+                'edit.html',
+                filter='empty',
+                filter_scope='target',
+                order='index',
+                order_col='target',
+                order_orientation='ascending'
+            )

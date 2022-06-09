@@ -44,6 +44,13 @@ def remove(df: pd.DataFrame,
 
 
 # ====================
+def mask_source_dup(df: pd.DataFrame) -> pd.Series:
+    """Mask to capture duplicated source texts in a pandas dataframe"""
+
+    return df.duplicated(subset=['source'])
+
+
+# ====================
 def get_num_and_remaining(df: pd.DataFrame,
                           mask: Callable[[pd.DataFrame], pd.Series]
                           ) -> Tuple[int, int]:

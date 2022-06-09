@@ -127,10 +127,12 @@ def get_next_n_rows(n: int):
         regex = settings['regex']
         if scope != 'target':
             this_page['source'] = highlight_find_replace(this_page['source'],
-                                                         search_re, replace_re, regex)
+                                                         search_re, replace_re,
+                                                         regex)
         if scope != 'source':
             this_page['target'] = highlight_find_replace(this_page['target'],
-                                                         search_re, replace_re, regex)
+                                                         search_re, replace_re,
+                                                         regex)
     this_page['index'] = this_page.index
     return this_page, showing_from, showing_to, total
 

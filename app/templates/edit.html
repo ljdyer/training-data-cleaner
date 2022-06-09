@@ -13,46 +13,41 @@
             <label for="filter" class="col-2 col-form-label">Filter</label>
             <select class="form-select form-control" aria-label="filter" id="filter">
                 {% for this_filter_id, display_name in filters %}
-                <option value="{{ this_filter_id }}{{ ' selected' if filter_id==this_filter_id }}">{{ display_name }}</option>
+                <option value="{{ this_filter_id }}"{{ ' selected' if filter == this_filter_id }}>{{ display_name }}</option>
                 {% endfor %}
             </select>
-            <div class="btn-group btn-group-toggle mx-2" style="display: none" data-toggle="buttons" id="filter-scope">
-                <label class="btn btn-primary active">
-                    <input type="radio" name="filter-scope" id="source" checked>Source
+                {% set display_none = ' style = "display: none"' | safe %}
+            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="filter-scope"{{ display_none if filter_scope is none }}>
+                {% set filter_scopes = ['source', 'target', 'both', 'either'] %}
+                {% for this_filter_scope in filter_scopes %}
+                <label class="btn btn-primary{{ ' active' if filter_scope == this_filter_scope }}">
+                    <input type="radio" name="filter-scope" id="{{ this_filter_scope }}"{{ ' checked' if filter_scope == this_filter_scope }}>{{ this_filter_scope | title_case }}
                 </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="filter-scope" id="target">Target
-                </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="filter-scope" id="both">Both
-                </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="filter-scope" id="either">Either
-                </label>
+                {% endfor %}
             </div>
         </div>
         <div class="col input-group">
             <label for="order" class="col-2 col-form-label">Order</label>
             <select class="form-select form-control" aria-label="order" id="order">
                 {% for id, display_name in orders %}
-                <option value="{{ id }}">{{ display_name }}</option>
+                <option value="{{ id }}"{{ ' selected' if order == id }}>{{ display_name }}</option>
                 {% endfor %}
             </select>
-            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons"  style="display: none" id="order-col">
-                <label class="btn btn-primary active">
-                    <input type="radio" name="order-column" id="source" checked>Source
+            <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="order-col"{{ display_none if order_col is none }} >
+                {% set order_cols = ['source', 'target'] %}
+                {% for this_order_col in order_cols %}
+                <label class="btn btn-primary{{ ' active' if order_col == this_order_col }}">
+                    <input type="radio" name="order-column" id="{{ this_order_col }}"{{ ' checked' if order_col == this_order_col }}>{{ this_order_col | title_case }}
                 </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="order-column" id="target">Target
-                </label>
+                {% endfor %}
             </div>
             <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="order-orientation">
-                <label class="btn btn-primary">
-                    <input type="radio" name="order-orientation" id="ascending" checked>↑
+                {% set order_orientations = [('ascending', '↑'), ('descending', '↓')] %}
+                {% for this_order_orientation, icon in order_orientations %}
+                <label class="btn btn-primary{{ ' active' if order_orientation == this_order_orientation }}">
+                    <input type="radio" name="order-orientation" id="{{ this_order_orientation }}"{{ ' checked' if order_orientation == this_order_orientation }}>{{ icon }}
                 </label>
-                <label class="btn btn-primary btn-disabled">
-                    <input type="radio" name="order-orientation" id="descending">↓
-                </label>
+                {% endfor %}
             </div>
         </div>
     </div>

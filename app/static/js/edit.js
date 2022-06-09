@@ -166,34 +166,6 @@ $(() => {
     $('#submit').click(submit);
     $('#start-over').click(startOver);
     $('#remove-all').click(removeAll);
-    const filter = $.urlParam('filter');
-    if (filter) { $('#filter').val(filter); }
-    const filterScope = $.urlParam('filter_scope');
-    if (filterScope) {
-        $('#filter-scope').show(500, () => {
-            const thisFilterScope = $('#filter-scope').find(`#${filterScope}`);
-            thisFilterScope.closest('.btn').button('toggle');
-            thisFilterScope.blur();
-        });
-    }
-    const order = $.urlParam('order');
-    if (order) { $('#order').val(order); }
-    const orderCol = $.urlParam('order_col');
-    if (orderCol) {
-        $('#order-col').show(500, () => {
-            const thisOrderCol = $('#order-col').find(`#${orderCol}`);
-            thisOrderCol.click();
-            thisOrderCol.blur();
-        });
-    }
-    const orderOrientation = $.urlParam('order_orientation');
-    if (orderOrientation) {
-        $('#order-orientation').show(500, () => {
-            const thisOrderOrientation = $('#order-orientation').find(`#${orderOrientation}`);
-            thisOrderOrientation.click();
-            thisOrderOrientation.blur();
-        });
-    }
     refreshWithNewSettings();
     $("#filter, #order, input[name='filter-scope'], input[name='order-column'], input[name='order-orientation']").change(refreshWithNewSettings);
 });
