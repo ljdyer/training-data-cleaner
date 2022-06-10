@@ -118,7 +118,6 @@ def get_next_n_rows(n: int):
     showing_to = min(total - 1, showing_from + n - 1)
     session['start_index_next'] = session['start_index_next'] + n
     this_page = preview_df.iloc[showing_from:showing_to+1]
-    this_page = this_page.applymap(escape_html)
     # Find/replace preview
     if settings['mode'] == 'find_replace':
         scope = settings['scope']
@@ -133,6 +132,7 @@ def get_next_n_rows(n: int):
             this_page['target'] = highlight_find_replace(this_page['target'],
                                                          search_re, replace_re,
                                                          regex)
+
     this_page['index'] = this_page.index
     return this_page, showing_from, showing_to, total
 
@@ -148,11 +148,17 @@ def highlight_find_replace(col: pd.Series,
         # 1 since \1 is used for preview.
         replace_re = increment_groups_by_1(replace_re)
 
-    return col.str.replace(
+    new_col = col.str.replace(
         rf"({search_re})",
-        rf"<del>\1</del><ins>{replace_re}</ins>",
+        rf"__START_DEL__\1__END_DEL____START_INS__{replace_re}__END_INS__",
         regex=True
     )
+    new_col = new_col.apply(escape_html)
+    new_col = new_col.str.replace('__START_DEL__', '<del>')
+    new_col = new_col.str.replace('__END_DEL__', '</del>')
+    new_col = new_col.str.replace('__START_INS__', '<ins>')
+    new_col = new_col.str.replace('__END_INS__', '</ins>')
+    return new_col
 
 
 # ====================
