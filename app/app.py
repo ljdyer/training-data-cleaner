@@ -99,9 +99,15 @@ def handle_no_data_exception(e):
 
 
 # ====================
+@app.errorhandler(redis.exceptions.ResponseError)
+def handle_out_of_memory_exception(e):
+    return render_template('error.html', error_type='out_of_memory')
+
+
+# ====================
 @app.errorhandler(NotXlsxException)
 def handle_not_xlsx_exception(e):
-    return render_template('upload.html', error_type='not_xlsx')
+    return render_template('error.html', error_type='not_xlsx')
 
 
 # ====================

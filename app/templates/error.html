@@ -10,6 +10,10 @@
 <p class="text-center">
     Your data must be in .xlsx format. Please try uploading another file.
 </p>
+{% elif error_type == 'out_of_memory' %}
+<p class="text-center">
+    Redis exception. Most like caused by lack of available memory.
+</p>
 {% elif error_type == 'unknown' %}
 <p class="text-center">
     An unknown error occurred during data analysis.
