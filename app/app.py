@@ -86,10 +86,10 @@ class NotXlsxException(Exception):
     pass
 
 
-# ====================
-@app.errorhandler(500)
-def error500(error):
-    return render_template('error.html', error_type='500', error_msg=error)
+# # ====================
+# @app.errorhandler(500)
+# def error500(error):
+#     return render_template('error.html', error_type='500', error_msg=error)
 
 
 # ====================
