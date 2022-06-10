@@ -5,6 +5,7 @@ Main program for training data cleaner
 """
 
 import os
+import traceback
 
 import pandas as pd
 import redis
@@ -14,12 +15,12 @@ from flask_session import Session
 
 from app_elements.blueprints.download import download_
 from app_elements.blueprints.edit import edit_
-from app_elements.blueprints.source_dup import source_dup_
+from app_elements.blueprints.find_replace import find_replace_
 from app_elements.blueprints.settings import settings_
+from app_elements.blueprints.source_dup import source_dup_
 from app_elements.blueprints.summary import summary_
 from app_elements.blueprints.upload import upload_
 from app_elements.blueprints.view_data import view_data_
-from app_elements.blueprints.find_replace import find_replace_
 from app_elements.context_processor import provide_context_info
 from app_elements.exceptions import NoDataException
 from app_elements.options import OPTIONS
@@ -86,10 +87,11 @@ class NotXlsxException(Exception):
     pass
 
 
-# # ====================
-# @app.errorhandler(500)
-# def error500(error):
-#     return render_template('error.html', error_type='500', error_msg=error)
+# ====================
+@app.errorhandler(500)
+def error500(error):
+    return render_template('error.html', error_type='500',
+                           error_msg=traceback.format_exc())
 
 
 # ====================
