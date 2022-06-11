@@ -1,3 +1,5 @@
+let textWithoutMarkers = {};
+
 function updateNumSelected() {
     $('#num-selected').text($('tr.table-secondary').length);
 }
@@ -12,6 +14,34 @@ function updateShowingInfo(showingFrom, showingTo, showingTotal) {
     $('#showing-total').text(showingTotal);
 }
 
+function toggleRow($row) {
+    if ($row.attr('data-edited')) {
+        $row.toggleClass('table-success');
+    }
+    $row.toggleClass('table-secondary');
+    updateNumSelected();
+}
+
+function makeEditable($row) {
+    if (!($row.attr('data-edited'))) {
+        const index = parseInt($row.find('.index').text(), 10);
+        const $sourceCell = $row.find('.source');
+        const $targetCell = $row.find('.target');
+        // eslint-disable-next-line no-plusplus
+        for (let i = 0; i < textWithoutMarkers.length; i++) {
+            if (textWithoutMarkers[i].index === index) {
+                $sourceCell.text(textWithoutMarkers[i].source);
+                $targetCell.text(textWithoutMarkers[i].target);
+            }
+        }
+        $sourceCell.attr('contenteditable', true);
+        $targetCell.attr('contenteditable', true);
+        $row.addClass('table-success');
+        $row.removeClass('table-secondary');
+        $row.attr('data-edited', true);
+    }
+}
+
 function writeTable(dfAsJson, showingFrom) {
     const dfParsed = JSON.parse(dfAsJson);
     const tableBody = $('#data-table').find('tbody');
@@ -23,14 +53,18 @@ function writeTable(dfAsJson, showingFrom) {
         const newRow = $('<tr>');
         newRow.append($(`<th>${count}</th>`));
         newRow.append($(`<td class="index">${row.index}</td>`));
-        newRow.append($(`<td class="source" contenteditable="true">${row.source}</td>`));
-        newRow.append($(`<td class="target" contenteditable="true">${row.target}</td>`));
+        newRow.append($(`<td class="source" contenteditable="false">${row.source}</td>`));
+        newRow.append($(`<td class="target" contenteditable="false">${row.target}</td>`));
         tableBody.append(newRow);
         count += 1;
     }
-    // tableBody.find('th,td.index').click(function toggleParent() {
-    //     toggleRow($(this).parent());
-    // });
+    tableBody.find('th,td.index').on('click', (e) => {
+        toggleRow($(e.currentTarget).parent());
+    });
+    tableBody.find('td.source,td.target').on('click', (e) => {
+        makeEditable($(e.currentTarget).parent());
+        e.currentTarget.focus();
+    });
     updateNumSelected();
 }
 
@@ -41,6 +75,7 @@ function handleResponse(response) {
         const rowOrRows = parseInt(dfLen, 10) === 1 ? 'row' : 'rows';
         $('#num-rows').text(`${dfLen.toString()} ${rowOrRows}`);
     }
+    textWithoutMarkers = JSON.parse(responseParsed.df_unmarked);
     writeTable(responseParsed.df, responseParsed.showing_from);
     const showingFrom = responseParsed.showing_from;
     const showingTo = responseParsed.showing_to;
@@ -65,17 +100,6 @@ function preview() {
     $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
     $('#skip-page, #select-all, #deselect-all, #replace-remove, #replace-leave, #replace-all, #remove-all').removeClass('disabled');
 }
-
-// function applyOptions(options) {
-//     $('#filter-scope').toggle(!options.filter_scope_disabled);
-//     $('#order-col').toggle(!options.order_col_disabled);
-//     $('#remove-all').toggleClass('disabled', options.disable_remove_all);
-// }
-
-// function toggleRow($row) {
-//     $row.toggleClass('table-secondary');
-//     updateNumSelected();
-// }
 
 function replaceAll() {
     const action = 'replace_all';
@@ -102,36 +126,64 @@ function skipPage() {
 
 function removeAll() {
     const data = { action: 'remove_all' };
-    $.post('/edit', JSON.stringify(data)).done(handleResponse);
+    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
 }
 
-// function submit() {
-//     // Get indices of selected rows
-//     const remove = [];
-//     $('tbody').find('tr.table-secondary').find('td.index').each(function getRemoveRowInfo() {
-//         remove.push(parseInt($(this).text(), 10));
-//     });
-//     const update = {};
-//     $('tbody').find('tr:not(.table-secondary)').each(function getUpdateRowInfo() {
-//         const idx = parseInt($(this).find('td.index').text(), 10);
-//         const source = $(this).find('td.source').text();
-//         const target = $(this).find('td.target').text();
-//         update[idx] = [source, target];
-//     });
-//     const action = 'submit';
-//     const data = { action, remove, update };
-//     $.post('/edit', JSON.stringify(data)).done(handleResponse);
-// }
+/*
+Get indices of rows that have table-secondary class
+*/
+function getSelectedRowIndices() {
+    const selected = [];
+    $('tbody').find('tr.table-secondary').find('td.index').each((idx, e) => {
+        const $this = $(e);
+        selected.push(parseInt($this.text(), 10));
+    });
+    return selected;
+}
 
-// function startOver() {
-//     const data = { action: 'start_over' };
-//     $.post('/edit', JSON.stringify(data)).done(handleResponse);
-// }
+/*
+Get indices of rows that do not have either table-secondary or table-success classes
+*/
+function getUnselectedUneditedRowInfo() {
+    const unselectedUnedited = [];
+    $('tbody').find('tr:not(.table-secondary):not(.table-success)').find('td.index').each((idx, e) => {
+        const $this = $(e);
+        unselectedUnedited.push(parseInt($this.text(), 10));
+    });
+    return unselectedUnedited;
+}
+/*
+Get index, source, and target from rows that do not have table-secondary class
+but have table-success class
+*/
+function getUnselectedEditedRowInfo() {
+    const unselectedEdited = {};
+    $('tbody').find('tr.table-success:not(.table-secondary)').each((idx, e) => {
+        const $this = $(e);
+        const index = parseInt($this.find('td.index').text(), 10);
+        const source = $this.find('td.source').text();
+        const target = $this.find('td.target').text();
+        unselectedEdited[index] = [source, target];
+    });
+    return unselectedEdited;
+}
 
-// function removeAll() {
-//     const data = { action: 'remove_all' };
-//     $.post('/edit', JSON.stringify(data)).done(handleResponse);
-// }
+function replaceRemove() {
+    const remove = getSelectedRowIndices();
+    const update = getUnselectedEditedRowInfo();
+    const replace = getUnselectedUneditedRowInfo();
+    const action = 'replace_remove';
+    const data = { action, remove, replace };
+    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
+}
+
+function replaceLeave() {
+    const update = getUnselectedEditedRowInfo();
+    const action = 'replace_remove';
+    const data = { action, replace };
+    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
+}
+
 
 // handleKeyDown is used in shortcuts.js
 // eslint-disable-next-line no-unused-vars
@@ -174,38 +226,6 @@ $(() => {
     $('#deselect-all').on('click', deselectAll);
     $('#remove-all').on('click', removeAll);
     $('#replace-all').on('click', replaceAll);
-    // $('#submit').click(submit);
-    // $('#start-over').click(startOver);
-
-    // $('#remove-all').click(removeAll);
-    // const filter = $.urlParam('filter');
-    // if (filter) { $('#filter').val(filter); }
-    // const filterScope = $.urlParam('filter_scope');
-    // if (filterScope) {
-    //     $('#filter-scope').show(0, () => {
-    //         const thisFilterScope = $('#filter-scope').find(`#${filterScope}`);
-    //         thisFilterScope.click();
-    //         thisFilterScope.blur();
-    //     });
-    // }
-    // const order = $.urlParam('order');
-    // if (order) { $('#order').val(order); }
-    // const orderCol = $.urlParam('order_col');
-    // if (orderCol) {
-    //     $('#order-col').show(0, () => {
-    //         const thisOrderCol = $('#order-col').find(`#${orderCol}`);
-    //         thisOrderCol.click();
-    //         thisOrderCol.blur();
-    //     });
-    // }
-    // const orderOrientation = $.urlParam('order_orientation');
-    // if (orderOrientation) {
-    //     $('#order-orientation').show(0, () => {
-    //         const thisOrderOrientation = $('#order-orientation').find(`#${orderOrientation}`);
-    //         thisOrderOrientation.click();
-    //         thisOrderOrientation.blur();
-    //     });
-    // }
-    // refreshWithNewSettings();
-    // $("#filter, #order, input[name='filter-scope'], input[name='order-column'], input[name='order-orientation']").change(refreshWithNewSettings);
+    $('#replace-remove').on('click', replaceRemove);
+    $('#replace-leave').on('click', replaceLeave);
 });

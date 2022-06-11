@@ -4,6 +4,7 @@ import pandas as pd
 from app_elements.helper_functions.helper import (get_df, get_preview_df,
                                                   save_df, save_preview_df)
 from flask import session
+from operator import itemgetter
 
 from ..filters import FILTERS
 from ..orders import ORDERS
@@ -118,23 +119,36 @@ def get_next_n_rows(n: int):
     showing_to = min(total - 1, showing_from + n - 1)
     session['start_index_next'] = session['start_index_next'] + n
     this_page = preview_df.iloc[showing_from:showing_to+1]
+    if settings['mode'] == 'edit':
+        return this_page, showing_from, showing_to, total
     # Find/replace preview
-    if settings['mode'] == 'find_replace':
-        scope = settings['scope']
-        search_re = settings['search_re']
-        replace_re = settings['replace_re']
-        regex = settings['regex']
+    elif settings['mode'] == 'find_replace':
+        scope, search_re, replace_re, regex = \
+            itemgetter('scope', 'search_re', 'replace_re', 'regex')(settings)
+        # Version showing replace operations in red/green
+        this_page_marked = this_page.copy()
         if scope != 'target':
-            this_page['source'] = highlight_find_replace(this_page['source'],
-                                                         search_re, replace_re,
-                                                         regex)
+            this_page_marked['source'] = \
+                highlight_find_replace(this_page_marked['source'],
+                                       search_re, replace_re, regex)
         if scope != 'source':
-            this_page['target'] = highlight_find_replace(this_page['target'],
-                                                         search_re, replace_re,
-                                                         regex)
-
-    this_page['index'] = this_page.index
-    return this_page, showing_from, showing_to, total
+            this_page_marked['target'] = \
+                highlight_find_replace(this_page_marked['target'],
+                                       search_re, replace_re, regex)
+        this_page_marked['index'] = this_page.index
+        # Version with just replacement
+        this_page_unmarked = this_page.copy()
+        if scope != 'target':
+            this_page_unmarked['source'] = \
+                this_page_unmarked['source'].str.replace(search_re, replace_re,
+                                                         regex=regex)
+        if scope != 'source':
+            this_page_unmarked['target'] = \
+                this_page_unmarked['target'].str.replace(search_re, replace_re,
+                                                         regex=regex)
+        this_page_unmarked['index'] = this_page_unmarked.index
+    return (this_page_marked, this_page_unmarked, showing_from, showing_to,
+            total)
 
 
 # ====================
@@ -252,10 +266,8 @@ def replace_all():
     df = get_df()
     settings = session['current_settings']
     assert settings['mode'] == 'find_replace'
-    scope = settings['scope']
-    search_re = settings['search_re']
-    replace_re = settings['replace_re']
-    regex = settings['regex']
+    scope, search_re, replace_re, regex = \
+        itemgetter('scope', 'search_re', 'replace_re', 'regex')(settings)
     if scope != 'target':
         df['source'] = df['source'].str.replace(
             search_re, replace_re, regex=regex

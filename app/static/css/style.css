@@ -2,15 +2,11 @@ del {
     text-decoration: line-through;
     background-color: #d9534f; /* Bootstrap danger color */
     color: #555;
-    margin-left: 1px;
-    margin-right: 1px
 }
 
 ins {
     text-decoration: none;
     background-color: #5cb85c; /* Bootstrap success color */
-    margin-left: 1px;
-    margin-right: 1px
 }
 
 html, body {
