@@ -15,6 +15,7 @@ import html
 def escape_html(str_: str) -> str:
 
     escaped = html.escape(str(str_))
+    escaped = escaped.replace(" ", '&nbsp;')
     return escaped
 
 
@@ -100,6 +101,7 @@ def generate_preview_df_find_replace() -> pd.DataFrame:
             mask = pd.concat([source_mask, target_mask], axis=1).all(axis=1)
         elif scope == 'either':
             mask = pd.concat([source_mask, target_mask], axis=1).any(axis=1)
+    print(mask)
     preview_df = df[mask]
     session['start_index_next'] = 0
     save_preview_df(preview_df)
@@ -120,6 +122,7 @@ def get_next_n_rows(n: int):
     session['start_index_next'] = session['start_index_next'] + n
     this_page = preview_df.iloc[showing_from:showing_to+1]
     if settings['mode'] == 'edit':
+        this_page['index'] = this_page.index
         return this_page, showing_from, showing_to, total
     # Find/replace preview
     elif settings['mode'] == 'find_replace':
@@ -135,7 +138,7 @@ def get_next_n_rows(n: int):
             this_page_marked['target'] = \
                 highlight_find_replace(this_page_marked['target'],
                                        search_re, replace_re, regex)
-        this_page_marked['index'] = this_page.index
+        this_page_marked['index'] = this_page_marked.index
         # Version with just replacement
         this_page_unmarked = this_page.copy()
         if scope != 'target':
@@ -230,14 +233,9 @@ def apply_mask_func(df: pd.DataFrame,
 
 
 # ====================
-def update_df(rows_to_drop: list, rows_to_update: dict):
+def update_rows(rows_to_update: dict):
 
     df = get_df()
-
-    # Remove rows
-    df = df.drop(rows_to_drop, axis=0)
-
-    # Update rows
     for index, content in rows_to_update.items():
         index = int(index)
         source, target = content
@@ -245,7 +243,15 @@ def update_df(rows_to_drop: list, rows_to_update: dict):
         df.loc[index]['source'] = source
         df.loc[index]['target'] = target
     save_df(df)
+    return len(df)
 
+
+# ====================
+def remove_rows(rows_to_drop: list):
+
+    df = get_df()
+    df = df.drop(rows_to_drop, axis=0)
+    save_df(df)
     return len(df)
 
 

@@ -1,7 +1,9 @@
+import datetime
+import os
+
 import pandas as pd
-from app_elements.helper_functions.helper import (generate_download_fname,
-                                                  get_df, get_download_fpath)
-from flask import Blueprint, current_app, send_from_directory
+from app_elements.helper_functions.helper import get_df
+from flask import Blueprint, current_app, send_from_directory, session
 
 download_ = Blueprint('download_', __name__, template_folder='templates')
 
@@ -46,3 +48,23 @@ def write_excel(df: pd.DataFrame, path: str):
     worksheet = writer.sheets[sheet_name]
     worksheet.set_column(0, 1, 50)  # First and second columns
     writer.save()
+
+
+# ====================
+def generate_download_fname():
+
+    return f"{session['fname_root']}_{get_timestamp()}.{session['fname_ext']}"
+
+
+# ====================
+def get_download_fpath(fname):
+
+    return os.path.join(current_app.config['DOWNLOAD_FOLDER'], fname)
+
+
+# ====================
+def get_timestamp() -> str:
+    """Get a timestamp of the current time suitable for appending
+    to file names"""
+
+    return datetime.datetime.now().strftime("%d%b%Y-%H%M%S")

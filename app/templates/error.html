@@ -1,28 +1,46 @@
 {% extends 'main.html' %}
 
 {% block content %}
+
 {% if error_type == 'no_df' %}
-<p class="text-center">
-    You haven't uploaded any training data!
-    <a href="{{ url_for('upload_.upload') }}">Click here</a> to upload a file.
-</p>
+<div class="m-3 text-center">
+    <p>You haven't uploaded any training data!</p>
+    <p><a href="{{ url_for('upload_.upload') }}">Click here</a> to upload a file.</p>
+</div>
+
+{% elif error_type == 'df_read_error' %}
+<div class="m-3 text-center">
+    <p>Unable to read source and target information from the .xlsx file provided. Check it is in the correct format and try again.</p>
+    <p><a href="{{ url_for('upload_.upload') }}">Click here</a> to return to the file upload page.</p>
+</div>
+
 {% elif error_type == 'not_xlsx' %}
-<p class="text-center">
-    Your data must be in .xlsx format. Please try uploading another file.
-</p>
+<div class="m-3 text-center">
+    <p>Your data must be in .xlsx format. Please try uploading another file.</p>
+    <p><a href="{{ url_for('upload_.upload') }}">Click here</a> to return to the file upload page.</p>
+</div>
+
+{% elif error_type == 'more_than_one_file' %}
+<div class="m-3 text-center">
+    <p>It looks like you tried to upload more than one file. You can only upload one file.</p>
+    <p></p><a href="{{ url_for('upload_.upload') }}">Click here</a> to return to the file upload page.</p>
+</div>
+
 {% elif error_type == 'out_of_memory' %}
-<p class="text-center">
-    Redis exception. Most like caused by lack of available memory.
-</p>
+<div class="m-3 text-center">
+    <p>Redis exception. Most like caused by lack of available memory.</p>
+</div>
+
 {% elif error_type == 'unknown' %}
-<p class="text-center">
-    An unknown error occurred during data analysis.
-    Have you uploaded a file?
-    If not, <a href="{{ url_for('upload_.upload') }}">click here</a> to upload a file.
+<div class="m-3 text-center">
+    <p>An unknown error occurred during data analysis. Have you uploaded a file?</p>
+    <p>If not, <a href="{{ url_for('upload_.upload') }}">click here</a> to upload a file.</p>
 </p>
+
 {% elif error_type == '500' %}
-<p class="text-center">
-    {{ error_msg }}
-</p>
+<div class="m-3 text-center">
+    <p>{{ error_msg }}</p>
+</div> 
 {% endif %}
+
 {% endblock %}

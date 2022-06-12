@@ -21,8 +21,9 @@ from app_elements.blueprints.source_dup import source_dup_
 from app_elements.blueprints.summary import summary_
 from app_elements.blueprints.upload import upload_
 from app_elements.blueprints.view_data import view_data_
+from app_elements.blueprints.error import error_
 from app_elements.context_processor import provide_context_info
-from app_elements.exceptions import NoDataException
+from app_elements.exceptions import *
 from app_elements.options import OPTIONS
 from app_elements.template_filters import more_than_zero, pluralize, title_case
 
@@ -56,6 +57,7 @@ app.config.update(
     SESSION_USE_SIGNER=True,
     SESSION_REDIS=session_redis
 )
+app.config['TEMPLATE_AUTO_RELOAD'] = True
 server_session = Session(app)
 # Set default options
 for option_id, option in OPTIONS.items():
@@ -64,6 +66,7 @@ for option_id, option in OPTIONS.items():
 # Routes
 app.register_blueprint(upload_)
 app.register_blueprint(edit_)
+app.register_blueprint(error_)
 app.register_blueprint(summary_)
 app.register_blueprint(download_)
 app.register_blueprint(settings_)
@@ -81,12 +84,6 @@ dropzone = Dropzone(app)
 
 # === ERROR HANDLERS ===
 
-
-# ====================
-class NotXlsxException(Exception):
-    pass
-
-
 # ====================
 @app.errorhandler(500)
 def error500(error):
@@ -97,6 +94,7 @@ def error500(error):
 # ====================
 @app.errorhandler(NoDataException)
 def handle_no_data_exception(e):
+    print('NoDataException')
     return render_template('error.html', error_type='no_df')
 
 
@@ -104,12 +102,6 @@ def handle_no_data_exception(e):
 @app.errorhandler(redis.exceptions.ResponseError)
 def handle_out_of_memory_exception(e):
     return render_template('error.html', error_type='out_of_memory')
-
-
-# ====================
-@app.errorhandler(NotXlsxException)
-def handle_not_xlsx_exception(e):
-    return render_template('error.html', error_type='not_xlsx')
 
 
 # ====================

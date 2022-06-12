@@ -1,10 +1,11 @@
 import json
 from typing import Tuple
 
+from operator import itemgetter
 import pandas as pd
 from app_elements.helper_functions.helper import (check_df_in_session, get_df,
                                                   mask_source_dup)
-from app_elements.helper_functions.preview import update_df
+from app_elements.helper_functions.preview import update_rows, remove_rows
 from flask import Blueprint, render_template, request, session
 
 source_dup_ = Blueprint('source_dup_', __name__, template_folder='templates')
@@ -25,8 +26,9 @@ def source_dup():
         elif action == 'next_page':
             pass
         elif action == 'submit':
-            remove, update = json_data['remove'], json_data['update']
-            df_len = update_df(remove, update)
+            remove, update = itemgetter('remove', 'update')(json_data)
+            update_rows(update)
+            df_len = remove_rows(remove)
             response['df_len'] = df_len
 
         this_page, source_num, num_sources = get_next_source_dup()

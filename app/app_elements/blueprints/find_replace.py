@@ -1,10 +1,12 @@
 import json
 import re
+from operator import itemgetter
 
 from app_elements.helper_functions.helper import check_df_in_session
 from app_elements.helper_functions.preview import (generate_preview_df,
                                                    get_next_n_rows, remove_all,
-                                                   replace_all)
+                                                   remove_rows, replace_all,
+                                                   update_rows)
 from flask import Blueprint, current_app, render_template, request, session
 
 find_replace_ = Blueprint('find_replace_', __name__,
@@ -32,19 +34,23 @@ def find_replace():
             generate_preview_df(settings)
         elif action == 'next_page':
             pass
-        elif action == 'submit':
-            pass
-        elif action == 'start_over':
-            pass
         elif action == 'replace_all':
             replace_all()
+        elif action == 'replace_remove':
+            remove, update = itemgetter('remove', 'update')(json_data)
+            df_len = remove_rows(remove)
+            update_rows(update)
+            response['df_len'] = df_len
+        elif action == 'replace_leave':
+            update = itemgetter('update')(json_data)
+            update_rows(update)
         elif action == 'remove_all':
             df_len = remove_all()
             response['df_len'] = df_len
             generate_preview_df(session['current_settings'])
-        this_page_marked, this_page_unmarked, showing_from, showing_to, total = get_next_n_rows(
-            current_app.config['PREVIEW_NUM_MAX']
-        )
+        (this_page_marked, this_page_unmarked, showing_from, showing_to,
+         total) = \
+            get_next_n_rows(current_app.config['PREVIEW_NUM_MAX'])
         df_json = this_page_marked.to_json(orient='records')
         df_json_unmarked = this_page_unmarked.to_json(orient='records')
         response = {

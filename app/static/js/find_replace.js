@@ -109,12 +109,19 @@ function replaceAll() {
 }
 
 function deselectAll() {
-    $('tbody').find('tr').removeClass('table-secondary');
+    $('tbody').find('tr').each((idx, e) => {
+        const $this = $(e);
+        if ($this.attr('data-edited')) {
+            $this.addClass('table-success');
+        }
+        $this.removeClass('table-secondary');
+    });
     updateNumSelected();
 }
 
 function selectAll() {
     $('tbody').find('tr').addClass('table-secondary');
+    $('tbody').find('tr').removeClass('table-success');
     updateNumSelected();
 }
 
@@ -142,48 +149,46 @@ function getSelectedRowIndices() {
 }
 
 /*
-Get indices of rows that do not have either table-secondary or table-success classes
-*/
-function getUnselectedUneditedRowInfo() {
-    const unselectedUnedited = [];
-    $('tbody').find('tr:not(.table-secondary):not(.table-success)').find('td.index').each((idx, e) => {
-        const $this = $(e);
-        unselectedUnedited.push(parseInt($this.text(), 10));
-    });
-    return unselectedUnedited;
-}
-/*
 Get index, source, and target from rows that do not have table-secondary class
 but have table-success class
 */
-function getUnselectedEditedRowInfo() {
-    const unselectedEdited = {};
-    $('tbody').find('tr.table-success:not(.table-secondary)').each((idx, e) => {
+function getUnselectedRowInfo() {
+    const unselected = {};
+    $('tbody').find('tr:not(.table-secondary)').each((idx, e) => {
         const $this = $(e);
         const index = parseInt($this.find('td.index').text(), 10);
-        const source = $this.find('td.source').text();
-        const target = $this.find('td.target').text();
-        unselectedEdited[index] = [source, target];
+        let source = '';
+        let target = '';
+        if ($this.hasClass('table-success')) {
+            source = $this.find('td.source').text();
+            target = $this.find('td.target').text();
+        } else {
+            for (let i = 0; i < textWithoutMarkers.length; i += 1) {
+                if (textWithoutMarkers[i].index === index) {
+                    source = textWithoutMarkers[i].source;
+                    target = textWithoutMarkers[i].target;
+                }
+            }
+        }
+        unselected[index] = [source, target];
     });
-    return unselectedEdited;
+    return unselected;
 }
 
 function replaceRemove() {
     const remove = getSelectedRowIndices();
-    const update = getUnselectedEditedRowInfo();
-    const replace = getUnselectedUneditedRowInfo();
+    const update = getUnselectedRowInfo();
     const action = 'replace_remove';
-    const data = { action, remove, replace };
+    const data = { action, remove, update };
     $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
 }
 
 function replaceLeave() {
-    const update = getUnselectedEditedRowInfo();
-    const action = 'replace_remove';
-    const data = { action, replace };
+    const update = getUnselectedRowInfo();
+    const action = 'replace_leave';
+    const data = { action, update };
     $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
 }
-
 
 // handleKeyDown is used in shortcuts.js
 // eslint-disable-next-line no-unused-vars
