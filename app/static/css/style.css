@@ -1,3 +1,9 @@
+table {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+}
+
 del {
     text-decoration: line-through;
     background-color: #d9534f; /* Bootstrap danger color */

@@ -11,5 +11,11 @@ OPTIONS = {
         'default': 200,
         'force_int': True,
         'type': 'INPUT'
+    },
+    'PREVIEW_SAMPLE': {
+        'display': 'Number of rows to include in preview',
+        'default': 100,
+        'force_int': True,
+        'type': 'INPUT'
     }
 }

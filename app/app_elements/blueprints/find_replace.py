@@ -3,10 +3,12 @@ import re
 from operator import itemgetter
 
 from app_elements.helper_functions.helper import check_df_in_session
-from app_elements.helper_functions.preview import (generate_preview_df,
-                                                   get_next_n_rows, remove_all,
-                                                   remove_rows, replace_all,
-                                                   update_rows)
+from app_elements.helper_functions.preview_helper import (generate_preview_df,
+                                                          get_next_n_rows,
+                                                          remove_all,
+                                                          remove_rows,
+                                                          replace_all,
+                                                          update_rows)
 from flask import Blueprint, current_app, render_template, request, session
 
 find_replace_ = Blueprint('find_replace_', __name__,
@@ -26,11 +28,8 @@ def find_replace():
         if action == 'preview':
             settings = json_data['settings']
             settings['mode'] = 'find_replace'
-            print(settings['regex'])
-            print(settings['search_re'])
             if not settings['regex']:
                 settings['search_re'] = re.escape(settings['search_re'])
-            print(settings['search_re'])
             generate_preview_df(settings)
         elif action == 'next_page':
             pass
@@ -42,7 +41,7 @@ def find_replace():
             update_rows(update)
             response['df_len'] = df_len
         elif action == 'replace_leave':
-            update = itemgetter('update')(json_data)
+            update = json_data['update']
             update_rows(update)
         elif action == 'remove_all':
             df_len = remove_all()
@@ -65,4 +64,19 @@ def find_replace():
 
     if request.method == 'GET':
         check_df_in_session()
-        return render_template('find_replace.html')
+        if request.args.get('find'):
+            return render_template(
+                'find_replace.html',
+                find=request.args.get('find'),
+                scope=request.args.get('scope'),
+                use_regex=request.args.get('use_regex'),
+                replace=request.args.get('replace')
+            )
+        else:
+            return render_template(
+                'find_replace.html',
+                find='',
+                scope='source',
+                use_regex=False,
+                replace=''
+            )

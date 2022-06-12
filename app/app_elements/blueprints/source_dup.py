@@ -1,11 +1,11 @@
 import json
+from operator import itemgetter
 from typing import Tuple
 
-from operator import itemgetter
 import pandas as pd
-from app_elements.helper_functions.helper import (check_df_in_session, get_df,
-                                                  mask_source_dup)
-from app_elements.helper_functions.preview import update_rows, remove_rows
+from app_elements.helper_functions.helper import check_df_in_session, get_df
+from app_elements.helper_functions.preview_helper import (remove_rows,
+                                                          update_rows)
 from flask import Blueprint, render_template, request, session
 
 source_dup_ = Blueprint('source_dup_', __name__, template_folder='templates')
@@ -62,8 +62,8 @@ def get_next_source_dup() -> Tuple[pd.DataFrame, int, int]:
 
     Return a 3-tuple containing the following elements:
     - The next set of source, target pairs to display (type: pd.DataFrame)
-    - The number (index) of this source duplicate
-    - The total number of unique sources
+    - The number (index) of this source duplicate (type: int)
+    - The total number of unique sources (type: int)
     """
 
     df = get_df()
@@ -80,3 +80,10 @@ def get_next_source_dup() -> Tuple[pd.DataFrame, int, int]:
     session['start_source_next'] += 1
     this_source_dup['index'] = this_source_dup.index
     return this_source_dup, source_num, num_sources
+
+
+# ====================
+def mask_source_dup(df: pd.DataFrame) -> pd.Series:
+    """Mask to capture duplicated source texts in a pandas dataframe"""
+
+    return df.duplicated(subset=['source'])

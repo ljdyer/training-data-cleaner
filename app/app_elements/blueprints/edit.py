@@ -1,11 +1,13 @@
 import json
-
 from operator import itemgetter
+
 from app_elements.helper_functions.helper import check_df_in_session
-from app_elements.helper_functions.preview import (generate_preview_df,
-                                                   get_next_n_rows,
-                                                   get_options, remove_all,
-                                                   update_rows, remove_rows)
+from app_elements.helper_functions.preview_helper import (generate_preview_df,
+                                                          get_next_n_rows,
+                                                          get_options,
+                                                          remove_all,
+                                                          remove_rows,
+                                                          update_rows)
 from flask import Blueprint, current_app, render_template, request, session
 
 edit_ = Blueprint('edit_', __name__, template_folder='templates')
@@ -62,9 +64,9 @@ def edit():
         else:
             return render_template(
                 'edit.html',
-                filter='empty',
-                filter_scope='target',
+                filter='none',
+                filter_scope=None,
                 order='index',
-                order_col='target',
+                order_col=None,
                 order_orientation='ascending'
             )

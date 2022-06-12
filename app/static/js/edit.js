@@ -1,3 +1,12 @@
+let lastToggled = null;
+let lastToggledState = '';
+
+function range(from, to) {
+    const lowest = Math.min(from, to)
+    const highest = Math.max(from, to)
+    return Array.from({ length: highest - lowest + 1 }, (v, k) => k + lowest);
+}
+
 function applyOptions(options) {
     $('#filter-scope').toggle(!options.filter_scope_disabled);
     $('#order-col').toggle(!options.order_col_disabled);
@@ -10,7 +19,29 @@ function updateNumSelected() {
 
 function toggleRow($row) {
     $row.toggleClass('table-secondary');
+    lastToggled = parseInt($row.find('th').text(), 10);
+    lastToggledState = $row.hasClass('table-secondary');
     updateNumSelected();
+}
+
+function toggleMultiple($row) {
+    const rowClicked = parseInt($row.find('th').text(), 10);
+    const indicesToToggle = range(rowClicked, lastToggled);
+    $('tbody').find('tr').each((idx, e) => {
+        const $this = $(e)
+        if (indicesToToggle.indexOf(idx + 1) !== -1) {
+            $this.toggleClass('table-secondary', lastToggledState);
+        }
+    });
+}
+
+function handleRowClick($row, shiftKey) {
+    if (!shiftKey) {
+        toggleRow($row);
+    }
+    if (shiftKey) {
+        toggleMultiple($row);
+    }
 }
 
 function deselectAll() {
@@ -39,8 +70,11 @@ function writeTable(dfAsJson, showingFrom) {
         tableBody.append(newRow);
         count += 1;
     }
-    tableBody.find('th,td.index').click(function toggleParent() {
-        toggleRow($(this).parent());
+    tableBody.find('th,td.index').on('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        $row = $(e.currentTarget).parent();
+        handleRowClick($row, e.shiftKey);
     });
     updateNumSelected();
 }
@@ -130,7 +164,10 @@ function handleKeydown(e) {
     const keyPressed = e.key.toLowerCase();
     const $focusedElement = $(e.target);
     const focusedTag = $focusedElement.prop('tagName');
-    if (focusedTag === 'BODY') {
+    const cellFocused = (focusedTag === 'TD');
+    if (keyPressed === 'escape') {
+        $(e.target).blur();
+    } else if (!cellFocused) {
         if (keyPressed === 's') {
             startOver();
         } else if (keyPressed === 'p') {
@@ -144,8 +181,6 @@ function handleKeydown(e) {
         } else if (keyPressed === 'x') {
             removeAll();
         }
-    } else if (keyPressed === 'escape') {
-        $(e.target).blur();
     }
 }
 

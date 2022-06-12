@@ -25,6 +25,18 @@ def sort_key_index(df: pd.DataFrame) -> pd.Series:
 
 
 # ====================
+def sort_key_percent_alpha(col: pd.Series) -> pd.Series:
+
+    len_all = col.str.len()
+    alpha_only = col.str.replace(r'[^a-zA-Z]', '', regex=True)
+    len_alpha = alpha_only.str.len()
+    len_all = len_all.apply(lambda x: 0.01 if x == 0 else x)
+    percent_alpha = len_alpha.div(len_all)
+    print(percent_alpha)
+    return(percent_alpha)
+
+
+# ====================
 ORDERS = {
     'index': {
         'display_name': 'Order in data file',
@@ -44,4 +56,8 @@ ORDERS = {
         'key': sort_key_ratio,
         'whole_row': True
     },
+    'percent_alpha': {
+        'display_name': 'Percentage of alphabetic letters (a-z or A-Z)',
+        'key': sort_key_percent_alpha
+    }
 }

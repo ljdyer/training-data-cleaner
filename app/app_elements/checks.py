@@ -27,7 +27,7 @@ may contain the following keys:
 
 import pandas as pd
 from app_elements.filters import (mask_empty, mask_same, mask_too_long)
-from app_elements.helper_functions.helper import mask_source_dup
+from app_elements.blueprints.source_dup import mask_source_dup
 from flask import current_app
 
 
@@ -134,6 +134,43 @@ def check_same(df: pd.DataFrame) -> dict:
         )
 
 
+# ====================
+def check_multiple_spaces(df: pd.DataFrame) -> dict:
+
+    multiple_spaces_re = r'\s\s+'
+    source_mask = df['source'].str.contains(multiple_spaces_re, regex=True)
+    target_mask = df['target'].str.contains(multiple_spaces_re, regex=True)
+    mask = pd.concat([source_mask, target_mask], axis=1).any(axis=1)
+    multiple_spaces = df[mask]
+    num_multiple_spaces = len(multiple_spaces)
+    if num_multiple_spaces == 0:
+        return PASS
+    else:
+        return FAIL(
+            f"Your data contains <b>{num_multiple_spaces}</b> rows where one " +
+            " or both cells contains sequences of two or more spaces"
+        )
+
+
+# ====================
+def check_html_tags(df: pd.DataFrame) -> dict:
+
+    html_tags_re = r'<[^>]*>'
+    source_mask = df['source'].str.contains(html_tags_re, regex=True)
+    target_mask = df['target'].str.contains(html_tags_re, regex=True)
+    mask = pd.concat([source_mask, target_mask], axis=1).any(axis=1)
+    html_tags = df[mask]
+    num_html_tags = len(html_tags)
+    if num_html_tags == 0:
+        return PASS
+    else:
+        return FAIL(
+            f"Your data contains <b>{num_html_tags}</b> rows where one " +
+            " or both cells may contain HTML tags"
+        )
+
+
+# ====================
 CHECKS = [
     {
         'id': 'source_dup',
@@ -181,5 +218,31 @@ CHECKS = [
             'order': 'index',
             'order_orientation': 'ascending'
         }
-    }
+    },
+    {
+        'id': 'multiple_spaces',
+        'display': 'Multiple spaces',
+        'type': 'warning',
+        'func': check_multiple_spaces,
+        'link_route': 'find_replace_.find_replace',
+        'link_args': {
+            'find': r'\s\s+',
+            'scope': 'either',
+            'use_regex': True,
+            'replace': r' '
+        }
+    },
+    {
+        'id': 'html_tags',
+        'display': 'HTML tags',
+        'type': 'warning',
+        'func': check_html_tags,
+        'link_route': 'find_replace_.find_replace',
+        'link_args': {
+            'find': r'<[^>]*>',
+            'scope': 'either',
+            'use_regex': True,
+            'replace': r''
+        }
+    },
 ]

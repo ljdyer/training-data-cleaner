@@ -1,30 +1,22 @@
+import html
+from operator import itemgetter
 from typing import Callable
 
 import pandas as pd
 from app_elements.helper_functions.helper import (get_df, get_preview_df,
                                                   save_df, save_preview_df)
 from flask import session
-from operator import itemgetter
 
 from ..filters import FILTERS
 from ..orders import ORDERS
-import html
 
 
 # ====================
 def escape_html(str_: str) -> str:
 
     escaped = html.escape(str(str_))
-    escaped = escaped.replace(" ", '&nbsp;')
+    escaped = escaped.replace(" ", '&ensp;')
     return escaped
-
-
-# ====================
-def unescape_str(str_: str) -> str:
-
-    return (str_
-            .encode('latin1', 'backslashreplace')
-            .decode('unicode-escape'))
 
 
 # ====================
@@ -53,7 +45,7 @@ def generate_preview_df_edit() -> pd.DataFrame:
         preview_df = df[mask]
     else:
         # Apply mask to selected column(s)
-        filter_scope = settings['filter_scope']
+        filter_scope = settings.get('filter_scope', 'source')
         mask = apply_mask_func(df, mask_func, filter_scope)
         preview_df = df[mask]
 
@@ -72,7 +64,7 @@ def generate_preview_df_edit() -> pd.DataFrame:
         preview_df = preview_df.drop(columns=['sort_key'])
     else:
         # Apply sort key to one column
-        order_col = settings['order_col']
+        order_col = settings.get('order_col', 'source')
         other_col = 'target' if order_col == 'source' else 'source'
         preview_df = preview_df.sort_values(by=[order_col, other_col],
                                             ascending=ascending, key=key)

@@ -20,8 +20,8 @@
             <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="filter-scope"{{ display_none if filter_scope is none }}>
                 {% set filter_scopes = ['source', 'target', 'both', 'either'] %}
                 {% for this_filter_scope in filter_scopes %}
-                <label class="btn btn-primary{{ ' active' if filter_scope == this_filter_scope }}">
-                    <input type="radio" name="filter-scope" id="{{ this_filter_scope }}"{{ ' checked' if filter_scope == this_filter_scope }}>{{ this_filter_scope | title_case }}
+                <label class="btn btn-primary{{ ' active' if filter_scope == this_filter_scope or (filter_scope is none and this_filter_scope) == 'source' }}">
+                    <input type="radio" name="filter-scope" id="{{ this_filter_scope }}"{{ ' checked' if filter_scope == this_filter_scope or (filter_scope is none and this_filter_scope) == 'source' }}>{{ this_filter_scope | title_case }}
                 </label>
                 {% endfor %}
             </div>
@@ -36,8 +36,8 @@
             <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="order-col"{{ display_none if order_col is none }} >
                 {% set order_cols = ['source', 'target'] %}
                 {% for this_order_col in order_cols %}
-                <label class="btn btn-primary{{ ' active' if order_col == this_order_col }}">
-                    <input type="radio" name="order-column" id="{{ this_order_col }}"{{ ' checked' if order_col == this_order_col }}>{{ this_order_col | title_case }}
+                <label class="btn btn-primary{{ ' active' if order_col == this_order_col or (order_col is none and this_order_col == 'source') }}">
+                    <input type="radio" name="order-column" id="{{ this_order_col }}"{{ ' checked' if order_col == this_order_col or (order_col is none and this_order_col == 'source')}}>{{ this_order_col | title_case }}
                 </label>
                 {% endfor %}
             </div>
@@ -75,8 +75,6 @@
     </div>
 </div>
 </form>
-
-
 
 <div class="mx-3 pb-1">
     <table class="table table-packed" id="data-table">

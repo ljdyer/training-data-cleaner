@@ -233,4 +233,7 @@ $(() => {
     $('#replace-all').on('click', replaceAll);
     $('#replace-remove').on('click', replaceRemove);
     $('#replace-leave').on('click', replaceLeave);
+    if ($('#find').val().length > 0) {
+        preview();
+    }
 });

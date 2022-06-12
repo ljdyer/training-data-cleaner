@@ -11,31 +11,25 @@
     <div class="row mx-3 mb-3">
         <div class="col input-group">
             <label for="find" class="col-2 col-form-label">Find</label>
-            <input type="text" class="form-control" aria-label="find" id="find">
+            <input type="text" class="form-control" aria-label="find" id="find" value="{{ find }}">
             <div class="btn-group btn-group-toggle mx-2" data-toggle="buttons" id="scope">
-                <label class="btn btn-primary active">
-                    <input type="radio" name="scope" id="source" checked>Source
+                {% set scopes = ['source', 'target', 'both', 'either'] %}
+                {% for this_scope in scopes %}
+                <label class="btn btn-primary{{ ' active' if scope == this_scope }}">
+                    <input type="radio" name="scope" id="{{ this_scope }}"{{ ' checked' if scope == this_scope }}>{{ this_scope | title_case }}
                 </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="scope" id="target">Target
-                </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="scope" id="both">Both
-                </label>
-                <label class="btn btn-primary">
-                    <input type="radio" name="scope" id="either">Either
-                </label>
+                {% endfor %}
             </div>
         </div>
         <div class="form-check mx-3 d-flex align-items-center" display="inline">
-            <input class="form-check-input" type="checkbox" id="regex">
+            <input class="form-check-input" type="checkbox" id="regex"{{ ' checked' if use_regex }}>
             <label class="form-check-label" for="regex">
                 Use RegEx
             </label>
         </div>
         <div class="col input-group">
             <label for="replace" class="col-2 col-form-label">Replace</label>
-            <input type="text" class="form-control" aria-label="replace" id="replace">
+            <input type="text" class="form-control" aria-label="replace" id="replace" value="{{ replace }}">
         </div>
     </div>
     <div class="d-flex justify-content-center">
@@ -72,7 +66,7 @@
                 <th class="col-1"></th>
                 <th class="col-1">Index</th>
                 <th class="col-5">Source</th>
-                <th class="col-6">Target</th>
+                <th class="col-5">Target</th>
             </tr>
         </thead>
         <tbody>
