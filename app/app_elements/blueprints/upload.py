@@ -18,7 +18,18 @@ upload_ = Blueprint('upload_', __name__, template_folder='templates')
 def index():
     """Redirect to upload page on app start"""
 
-    return redirect(url_for('upload_.upload'))
+    return redirect(url_for('upload_.home'))
+
+
+# ====================
+@upload_.route('/home')
+def home():
+    """Redirect to upload page on app start"""
+
+    if 'df' in session:
+        return redirect(url_for('summary_.summary'))
+    else:
+        return redirect(url_for('upload_.upload'))
 
 
 # ====================
