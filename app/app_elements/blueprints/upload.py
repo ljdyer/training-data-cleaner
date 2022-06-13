@@ -101,14 +101,3 @@ def save_info_to_session(info: dict):
 
     for key, value in info.items():
         session[key] = value
-
-
-# ====================
-def get_file(files: list) -> werkzeug.datastructures.FileStorage:
-    """Get a unique file from a list of files"""
-
-    # Raise exception if there is more than one file
-    # if len(files) > 1:
-    #     raise MoreThanOneFileException
-    # Return the first (and only) file
-    return files[0]

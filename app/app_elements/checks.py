@@ -129,7 +129,7 @@ def check_same(df: pd.DataFrame) -> dict:
         return PASS
     else:
         return FAIL(
-            f"Your data contains <b>{num_sames}</b> rows where the source " +
+            f"Your data contains <b>{num_sames}</b> row(s) where the source " +
             "is the same as the target."
         )
 
@@ -147,7 +147,7 @@ def check_multiple_spaces(df: pd.DataFrame) -> dict:
         return PASS
     else:
         return FAIL(
-            f"Your data contains <b>{num_multiple_spaces}</b> rows where one " +
+            f"Your data contains <b>{num_multiple_spaces}</b> row(s) where one " +
             " or both cells contains sequences of two or more spaces"
         )
 
@@ -165,8 +165,26 @@ def check_html_tags(df: pd.DataFrame) -> dict:
         return PASS
     else:
         return FAIL(
-            f"Your data contains <b>{num_html_tags}</b> rows where one " +
+            f"Your data contains <b>{num_html_tags}</b> row(s) where one " +
             " or both cells may contain HTML tags"
+        )
+
+
+# ====================
+def check_no_letters(df: pd.DataFrame) -> dict:
+
+    no_letters_re = r'^[!"#$%&\'()*+,-./:;<=>?@\\^_`{|}~0-9]*$'
+    source_mask = df['source'].str.contains(no_letters_re, regex=True)
+    target_mask = df['target'].str.contains(no_letters_re, regex=True)
+    mask = pd.concat([source_mask, target_mask], axis=1).any(axis=1)
+    no_letters = df[mask]
+    num_no_letters = len(no_letters)
+    if num_no_letters == 0:
+        return PASS
+    else:
+        return FAIL(
+            f"Your data contains <b>{num_no_letters}</b> row(s) where one " +
+            " or both cells contains only numbers and punctuation"
         )
 
 
@@ -245,4 +263,17 @@ CHECKS = [
             'replace': r''
         }
     },
+    {
+        'id': 'no_letters',
+        'display': 'No letters',
+        'type': 'warning',
+        'func': check_no_letters,
+        'link_route': 'find_replace_.find_replace',
+        'link_args': {
+            'find': r'^[!"#$%&\'()*+,-./:;<=>?@\\^_`{|}~0-9]*$',
+            'scope': 'either',
+            'use_regex': True,
+            'replace': r''
+        }
+    }
 ]
