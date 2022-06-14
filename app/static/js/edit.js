@@ -1,9 +1,11 @@
 let lastToggled = null;
 let lastToggledState = '';
+let $settingsComponents = null;
+const thisRoute = '/edit';
 
 function range(from, to) {
-    const lowest = Math.min(from, to)
-    const highest = Math.max(from, to)
+    const lowest = Math.min(from, to);
+    const highest = Math.max(from, to);
     return Array.from({ length: highest - lowest + 1 }, (v, k) => k + lowest);
 }
 
@@ -28,7 +30,7 @@ function toggleMultiple($row) {
     const rowClicked = parseInt($row.find('th').text(), 10);
     const indicesToToggle = range(rowClicked, lastToggled);
     $('tbody').find('tr').each((idx, e) => {
-        const $this = $(e)
+        const $this = $(e);
         if (indicesToToggle.indexOf(idx + 1) !== -1) {
             $this.toggleClass('table-secondary', lastToggledState);
         }
@@ -73,7 +75,7 @@ function writeTable(dfAsJson, showingFrom) {
     tableBody.find('th,td.index').on('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        $row = $(e.currentTarget).parent();
+        const $row = $(e.currentTarget).parent();
         handleRowClick($row, e.shiftKey);
     });
     updateNumSelected();
@@ -106,6 +108,15 @@ function handleResponse(response) {
     updateShowingInfo(showingFrom, showingTo, showingTotal);
 }
 
+function postToFlask(data) {
+    $.post(thisRoute, JSON.stringify(data)).done(handleResponse);
+}
+
+function postActionOnly(action) {
+    const data = { action };
+    postToFlask(data);
+}
+
 function refreshWithNewSettings() {
     const filter = $('#filter').find(':selected').val();
     const filterScope = $("input[name='filter-scope']").filter(':checked').attr('id');
@@ -121,13 +132,7 @@ function refreshWithNewSettings() {
     };
     const action = 'new_settings';
     const data = { action, settings };
-    $.post('/edit', JSON.stringify(data)).done(handleResponse);
-}
-
-function skipPage() {
-    const action = 'next_page';
-    const data = { action };
-    $.post('/edit', JSON.stringify(data)).done(handleResponse);
+    postToFlask(data);
 }
 
 function submit() {
@@ -145,17 +150,7 @@ function submit() {
     });
     const action = 'submit';
     const data = { action, remove, update };
-    $.post('/edit', JSON.stringify(data)).done(handleResponse);
-}
-
-function startOver() {
-    const data = { action: 'start_over' };
-    $.post('/edit', JSON.stringify(data)).done(handleResponse);
-}
-
-function removeAll() {
-    const data = { action: 'remove_all' };
-    $.post('/edit', JSON.stringify(data)).done(handleResponse);
+    postToFlask(data);
 }
 
 // handleKeyDown is used in shortcuts.js
@@ -165,32 +160,28 @@ function handleKeydown(e) {
     const $focusedElement = $(e.target);
     const focusedTag = $focusedElement.prop('tagName');
     const cellFocused = (focusedTag === 'TD');
+    // Escape blurs currently selected element
     if (keyPressed === 'escape') {
         $(e.target).blur();
+    // Other shortcuts fire as long as a table cell is not being edited
     } else if (!cellFocused) {
-        if (keyPressed === 's') {
-            startOver();
-        } else if (keyPressed === 'p') {
-            skipPage();
-        } else if (keyPressed === 'a') {
-            selectAll();
-        } else if (keyPressed === 'd') {
-            deselectAll();
-        } else if (keyPressed === 'enter') {
-            submit();
-        } else if (keyPressed === 'x') {
-            removeAll();
-        }
+        $('[data-shortcut-key]').each((idx, e_) => {
+            const thisShortcutKey = $(e_).attr('data-shortcut-key').toLowerCase();
+            if (keyPressed === thisShortcutKey) {
+                $(e_).trigger('click');
+            }
+        });
     }
 }
 
 $(() => {
-    $('#skip-page').click(skipPage);
+    $settingsComponents = $('[data-settings-component="true"]');
+    $('#skip-page').click(() => postActionOnly('next_page'));
     $('#select-all').click(selectAll);
     $('#deselect-all').click(deselectAll);
     $('#submit').click(submit);
-    $('#start-over').click(startOver);
-    $('#remove-all').click(removeAll);
+    $('#start-over').click(() => postActionOnly('start_over'));
+    $('#remove-all').click(() => postActionOnly('remove_all'));
     refreshWithNewSettings();
-    $("#filter, #order, input[name='filter-scope'], input[name='order-column'], input[name='order-orientation']").change(refreshWithNewSettings);
+    $settingsComponents.change(refreshWithNewSettings);
 });

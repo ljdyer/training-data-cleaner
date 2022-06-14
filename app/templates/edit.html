@@ -11,7 +11,7 @@
     <div class="row mx-3 mb-3">
         <div class="col input-group">
             <label for="filter" class="col-2 col-form-label">Filter</label>
-            <select class="form-select form-control" aria-label="filter" id="filter">
+            <select class="form-select form-control" aria-label="filter" id="filter" data-settings-component="true">
                 {% for this_filter_id, display_name in filters %}
                 <option value="{{ this_filter_id }}"{{ ' selected' if filter == this_filter_id }}>{{ display_name }}</option>
                 {% endfor %}
@@ -21,14 +21,14 @@
                 {% set filter_scopes = ['source', 'target', 'both', 'either'] %}
                 {% for this_filter_scope in filter_scopes %}
                 <label class="btn btn-primary{{ ' active' if filter_scope == this_filter_scope or (filter_scope is none and this_filter_scope) == 'source' }}">
-                    <input type="radio" name="filter-scope" id="{{ this_filter_scope }}"{{ ' checked' if filter_scope == this_filter_scope or (filter_scope is none and this_filter_scope) == 'source' }}>{{ this_filter_scope | title_case }}
+                    <input type="radio" name="filter-scope" data-settings-component="true" id="{{ this_filter_scope }}"{{ ' checked' if filter_scope == this_filter_scope or (filter_scope is none and this_filter_scope) == 'source' }}>{{ this_filter_scope | title_case }}
                 </label>
                 {% endfor %}
             </div>
         </div>
         <div class="col input-group">
             <label for="order" class="col-2 col-form-label">Order</label>
-            <select class="form-select form-control" aria-label="order" id="order">
+            <select class="form-select form-control" aria-label="order" id="order" data-settings-component="true">
                 {% for id, display_name in orders %}
                 <option value="{{ id }}"{{ ' selected' if order == id }}>{{ display_name }}</option>
                 {% endfor %}
@@ -37,7 +37,7 @@
                 {% set order_cols = ['source', 'target'] %}
                 {% for this_order_col in order_cols %}
                 <label class="btn btn-primary{{ ' active' if order_col == this_order_col or (order_col is none and this_order_col == 'source') }}">
-                    <input type="radio" name="order-column" id="{{ this_order_col }}"{{ ' checked' if order_col == this_order_col or (order_col is none and this_order_col == 'source')}}>{{ this_order_col | title_case }}
+                    <input type="radio" name="order-column" data-settings-component="true" id="{{ this_order_col }}"{{ ' checked' if order_col == this_order_col or (order_col is none and this_order_col == 'source')}}>{{ this_order_col | title_case }}
                 </label>
                 {% endfor %}
             </div>
@@ -45,7 +45,7 @@
                 {% set order_orientations = [('ascending', '↑'), ('descending', '↓')] %}
                 {% for this_order_orientation, icon in order_orientations %}
                 <label class="btn btn-primary{{ ' active' if order_orientation == this_order_orientation }}">
-                    <input type="radio" name="order-orientation" id="{{ this_order_orientation }}"{{ ' checked' if order_orientation == this_order_orientation }}>{{ icon }}
+                    <input type="radio" name="order-orientation" data-settings-component="true" id="{{ this_order_orientation }}"{{ ' checked' if order_orientation == this_order_orientation }}>{{ icon }}
                 </label>
                 {% endfor %}
             </div>
@@ -53,12 +53,12 @@
     </div>
     <div class="d-flex justify-content-center">
         <div class="mb-2 btn-block d-flex justify-content-center"  role="group">
-            <a class="btn btn-primary mx-2" href="#" id="start-over"><u>S</u>tart over</a>
-            <a class="btn btn-primary mx-2" href="#" id="skip-page">Ski<u>p</u> page</a>
-            <a class="btn btn-primary mx-2" href="#" id="select-all">Select <u>a</u>ll</a>
-            <a class="btn btn-primary mx-2" href="#" id="deselect-all"><u>D</u>eselect all</a>
-            <a class="btn btn-primary mx-2" href="#" id="submit">Remove selected and save changes (<u>Enter</u>)</a>
-            <a class="btn btn-danger mx-2 disabled" href="#" id="remove-all">Remove all rows (<u>X</u>)</a>
+            <a class="btn btn-primary mx-2" href="#" id="start-over" data-shortcut-key="s"><u>S</u>tart over</a>
+            <a class="btn btn-primary mx-2" href="#" id="skip-page" data-shortcut-key="p">Ski<u>p</u> page</a>
+            <a class="btn btn-primary mx-2" href="#" id="select-all" data-shortcut-key="a">Select <u>a</u>ll</a>
+            <a class="btn btn-primary mx-2" href="#" id="deselect-all" data-shortcut-key="d"><u>D</u>eselect all</a>
+            <a class="btn btn-primary mx-2" href="#" id="submit" data-shortcut-key="enter">Remove selected and save changes (<u>Enter</u>)</a>
+            <a class="btn btn-danger mx-2 disabled" href="#" id="remove-all" data-shortcut-key="x">Remove all rows (<u>X</u>)</a>
         </div>
     </div>
     <div class="row d-flex justify-content-center">

@@ -1,4 +1,6 @@
 let textWithoutMarkers = {};
+let $allActionButtons = null;
+const thisRoute = '/find_replace';
 
 function updateNumSelected() {
     $('#num-selected').text($('tr.table-secondary').length);
@@ -15,9 +17,7 @@ function updateShowingInfo(showingFrom, showingTo, showingTotal) {
 }
 
 function toggleRow($row) {
-    if ($row.attr('data-edited')) {
-        $row.toggleClass('table-success');
-    }
+    if ($row.attr('data-edited')) { $row.toggleClass('table-success'); }
     $row.toggleClass('table-secondary');
     updateNumSelected();
 }
@@ -81,11 +81,21 @@ function handleResponse(response) {
     const showingTo = responseParsed.showing_to;
     const showingTotal = responseParsed.showing_total;
     updateShowingInfo(showingFrom, showingTo, showingTotal);
+    updateNumSelected();
+}
+
+function postToFlask(data) {
+    $.post(thisRoute, JSON.stringify(data)).done(handleResponse);
+}
+
+function postActionOnly(action) {
+    const data = { action };
+    postToFlask(data);
 }
 
 function preview() {
-    // Snake case used for settings passed to Flask app
     const action = 'preview';
+    // Snake case used for settings passed to Flask app
     // eslint-disable-next-line camelcase
     const search_re = $('#find').val();
     // eslint-disable-next-line camelcase
@@ -97,15 +107,8 @@ function preview() {
         search_re, replace_re, scope, regex,
     };
     const data = { action, settings };
-    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
-    $('#skip-page, #select-all, #deselect-all, #replace-remove, #replace-leave, #replace-all, #remove-all').removeClass('disabled');
-}
-
-function replaceAll() {
-    const action = 'replace_all';
-    const data = { action };
-    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
-    updateNumSelected();
+    postToFlask(data);
+    $allActionButtons.removeClass('disabled');
 }
 
 function deselectAll() {
@@ -123,17 +126,6 @@ function selectAll() {
     $('tbody').find('tr').addClass('table-secondary');
     $('tbody').find('tr').removeClass('table-success');
     updateNumSelected();
-}
-
-function skipPage() {
-    const action = 'next_page';
-    const data = { action };
-    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
-}
-
-function removeAll() {
-    const data = { action: 'remove_all' };
-    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
 }
 
 /*
@@ -180,60 +172,54 @@ function replaceRemove() {
     const update = getUnselectedRowInfo();
     const action = 'replace_remove';
     const data = { action, remove, update };
-    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
+    postToFlask(data);
 }
 
 function replaceLeave() {
     const update = getUnselectedRowInfo();
     const action = 'replace_leave';
     const data = { action, update };
-    $.post('/find_replace', JSON.stringify(data)).done(handleResponse);
+    postToFlask(data);
 }
 
 // handleKeyDown is used in shortcuts.js
 // eslint-disable-next-line no-unused-vars
-// function handleKeydown(e) {
-//     const keyPressed = e.key.toLowerCase();
-//     const $focusedElement = $(e.target);
-//     const focusedTag = $focusedElement.prop('tagName');
-//     if (focusedTag === 'BODY') {
-//         if (keyPressed === 's') {
-//             startOver();
-//         } else if (keyPressed === 'p') {
-//             skipPage();
-//         } else if (keyPressed === 'a') {
-//             selectAll();
-//         } else if (keyPressed === 'd') {
-//             deselectAll();
-//         } else if (keyPressed === 'enter') {
-//             submit();
-//         } else if (keyPressed === 'x') {
-//             removeAll();
-//         }
-//     } else if (keyPressed === 'escape') {
-//         $(e.target).blur();
-//     }
-// }
+function handleKeydown(e) {
+    const keyPressed = e.key.toLowerCase();
+    const { ctrlKey } = e;
+    const $focusedElement = $(e.target);
+    const focusedTag = $focusedElement.prop('tagName');
+    const cellFocused = (focusedTag === 'TD');
+    // Escape blurs currently selected element
+    if (keyPressed === 'escape') {
+        $(e.target).blur();
+    // Other shortcuts fire as long as a table cell is not being edited
+    } else if (['find', 'replace'].indexOf($focusedElement.attr('id')) !== -1
+               && keyPressed === 'enter') {
+        preview();
+    } else if (!cellFocused) {
+        $('[data-shortcut-key]').each((idx, e_) => {
+            const thisShortcutKey = $(e_).attr('data-shortcut-key').toLowerCase();
+            const needCtrlKey = ($(e_).attr('data-shortcut-ctrl') === 'true');
+            if (keyPressed === thisShortcutKey && ctrlKey === needCtrlKey) {
+                $(e_).trigger('click');
+            }
+        });
+    }
+}
 
 $(() => {
-    $('#find, #replace').on('input', () => {
-        $('#skip-page, #select-all, #deselect-all, #replace-remove, #replace-leave, #replace-all, #remove-all').addClass('disabled');
-    });
-    $('#source, #target, #both, #either').on('click', () => {
-        $('#skip-page, #select-all, #deselect-all, #replace-remove, #replace-leave, #replace-all, #remove-all').addClass('disabled');
-    });
-    $('#regex').on('change', () => {
-        $('#skip-page, #select-all, #deselect-all, #replace-remove, #replace-leave, #replace-all, #remove-all').addClass('disabled');
-    });
+    $allActionButtons = $('a[data-action-button=true]');
+    $('#find, #replace').on('input', () => { $allActionButtons.addClass('disabled'); });
+    $('#source, #target, #both, #either').on('click', () => { $allActionButtons.addClass('disabled'); });
+    $('#regex').on('change', () => { $allActionButtons.addClass('disabled'); });
     $('#preview').on('click', preview);
-    $('#skip-page').on('click', skipPage);
+    $('#skip-page').on('click', () => { postActionOnly('next_page'); });
     $('#select-all').on('click', selectAll);
     $('#deselect-all').on('click', deselectAll);
-    $('#remove-all').on('click', removeAll);
-    $('#replace-all').on('click', replaceAll);
+    $('#remove-all').on('click', () => { postActionOnly('remove_all'); });
+    $('#replace-all').on('click', () => { postActionOnly('replace_all'); });
     $('#replace-remove').on('click', replaceRemove);
     $('#replace-leave').on('click', replaceLeave);
-    if ($('#find').val().length > 0) {
-        preview();
-    }
+    if ($('#find').val().length > 0) { preview(); }
 });
