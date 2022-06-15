@@ -4,6 +4,11 @@
 {% block imports %}
     <script src="{{ url_for('static', filename='js/edit.js') }}"></script>
     <script src="{{ url_for('static', filename='js/shortcuts.js') }}"></script>
+    <script>
+        function showIndex(index) {
+            window.location = "{{ url_for('edit_.edit', action='show_index', index='INDEX_HERE') }}".replace("INDEX_HERE", index);;
+        }
+    </script>
 {% endblock %}
 
 {% block content %}

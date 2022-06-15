@@ -20,17 +20,17 @@ def escape_html(str_: str) -> str:
 
 
 # ====================
-def generate_preview_df(settings: dict) -> pd.DataFrame:
+def generate_preview_df(settings: dict, index_to_display: int = None) -> pd.DataFrame:
 
     session['current_settings'] = settings
     if settings['mode'] == 'edit':
-        return generate_preview_df_edit()
+        return generate_preview_df_edit(index_to_display)
     elif settings['mode'] == 'find_replace':
         return generate_preview_df_find_replace()
 
 
 # ====================
-def generate_preview_df_edit() -> pd.DataFrame:
+def generate_preview_df_edit(index_to_display: int = None) -> pd.DataFrame:
 
     settings = session['current_settings']
     df = get_df()
@@ -69,7 +69,10 @@ def generate_preview_df_edit() -> pd.DataFrame:
         preview_df = preview_df.sort_values(by=[order_col, other_col],
                                             ascending=ascending, key=key)
 
-    session['start_index_next'] = 0
+    if index_to_display:    
+        session['start_index_next'] = min(0, index_to_display - 3)
+    else:
+        session['start_index_next'] = 0
     save_preview_df(preview_df)
     return preview_df
 

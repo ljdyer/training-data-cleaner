@@ -77,6 +77,9 @@ function writeTable(dfAsJson, showingFrom) {
         e.stopPropagation();
         const $row = $(e.currentTarget).parent();
         handleRowClick($row, e.shiftKey);
+    }).on('dblclick', (e) => {
+        index = parseInt($(e.currentTarget).parent().find('td.index').text(), 10);
+        showIndex(index);
     });
     updateNumSelected();
 }

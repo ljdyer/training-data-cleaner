@@ -24,9 +24,21 @@ def edit():
         response = {}
         if action == 'new_settings':
             settings = json_data['settings']
+            print(settings)
             settings['mode'] = 'edit'
             generate_preview_df(settings)
             response['options'] = get_options(settings)
+        elif action == 'view_index':
+            settings = {
+                'filter': 'none',
+                'filter_scope': 'source',
+                'order': 'index',
+                'order_col': 'source',
+                'order_orientation': 'ascending'
+            }
+            index = json_data['index']
+            generate_preview_df(settings, index)
+            pass
         elif action == 'next_page':
             pass
         elif action == 'submit':
