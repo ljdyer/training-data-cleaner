@@ -20,11 +20,11 @@ def escape_html(str_: str) -> str:
 
 
 # ====================
-def generate_preview_df(settings: dict, index_to_display: int = None) -> pd.DataFrame:
+def generate_preview_df(settings: dict) -> pd.DataFrame:
 
     session['current_settings'] = settings
     if settings['mode'] == 'edit':
-        return generate_preview_df_edit(index_to_display)
+        return generate_preview_df_edit()
     elif settings['mode'] == 'find_replace':
         return generate_preview_df_find_replace()
 
@@ -58,7 +58,8 @@ def generate_preview_df_edit(index_to_display: int = None) -> pd.DataFrame:
     # Get key
     key = order['key']
     if order.get('whole_row'):
-        # Sort based on whole row
+        # Generate a temp column based on contents of both columns and
+        # apply sort key to the temp column
         preview_df['sort_key'] = key(preview_df)
         preview_df = preview_df.sort_values(by='sort_key', ascending=ascending)
         preview_df = preview_df.drop(columns=['sort_key'])
@@ -69,8 +70,10 @@ def generate_preview_df_edit(index_to_display: int = None) -> pd.DataFrame:
         preview_df = preview_df.sort_values(by=[order_col, other_col],
                                             ascending=ascending, key=key)
 
-    if index_to_display:    
-        session['start_index_next'] = min(0, index_to_display - 3)
+    index_to_show = settings.get('index_to_show')
+    if index_to_show is not None:
+        session['start_index_next'] = max(0, int(index_to_show) - 3)
+        # TODO: Make this refer to the actual index
     else:
         session['start_index_next'] = 0
     save_preview_df(preview_df)

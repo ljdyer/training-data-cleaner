@@ -78,7 +78,9 @@ function writeTable(dfAsJson, showingFrom) {
         const $row = $(e.currentTarget).parent();
         handleRowClick($row, e.shiftKey);
     }).on('dblclick', (e) => {
-        index = parseInt($(e.currentTarget).parent().find('td.index').text(), 10);
+        const index = parseInt($(e.currentTarget).parent().find('td.index').text(), 10);
+        // showIndex defined in edit.html
+        // eslint-disable-next-line no-undef
         showIndex(index);
     });
     updateNumSelected();
@@ -133,6 +135,11 @@ function refreshWithNewSettings() {
         order_col: orderColumn,
         order_orientation: orderOrientation,
     };
+    try {
+        settings['index_to_show'] = indexToShow
+    } catch {
+        // Do nothing
+    } 
     const action = 'new_settings';
     const data = { action, settings };
     postToFlask(data);

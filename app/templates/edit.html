@@ -6,9 +6,12 @@
     <script src="{{ url_for('static', filename='js/shortcuts.js') }}"></script>
     <script>
         function showIndex(index) {
-            window.location = "{{ url_for('edit_.edit', action='show_index', index='INDEX_HERE') }}".replace("INDEX_HERE", index);;
+            window.location = "{{ url_for('edit_.edit', index_to_show='INDEX_HERE') }}".replace('INDEX_HERE', index);
         }
     </script>
+    {%if index_to_show_ %}
+        <script>indexToShow = "{{ index_to_show_ }}"</script>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -88,7 +91,7 @@
                 <th class="col-1"></th>
                 <th class="col-1">Index</th>
                 <th class="col-5">Source</th>
-                <th class="col-6">Target</th>
+                <th class="col-5">Target</th>
             </tr>
         </thead>
         <tbody>

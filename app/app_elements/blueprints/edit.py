@@ -21,24 +21,13 @@ def edit():
     if request.method == 'POST':
         json_data = request.get_json(force=True)
         action = json_data['action']
+        print(action)
         response = {}
         if action == 'new_settings':
             settings = json_data['settings']
-            print(settings)
             settings['mode'] = 'edit'
             generate_preview_df(settings)
             response['options'] = get_options(settings)
-        elif action == 'view_index':
-            settings = {
-                'filter': 'none',
-                'filter_scope': 'source',
-                'order': 'index',
-                'order_col': 'source',
-                'order_orientation': 'ascending'
-            }
-            index = json_data['index']
-            generate_preview_df(settings, index)
-            pass
         elif action == 'next_page':
             pass
         elif action == 'submit':
@@ -74,11 +63,13 @@ def edit():
                 order_orientation=request.args.get('order_orientation')
             )
         else:
+            index_to_show = request.args.get('index_to_show')
             return render_template(
                 'edit.html',
                 filter='none',
                 filter_scope=None,
                 order='index',
                 order_col=None,
-                order_orientation='ascending'
+                order_orientation='ascending',
+                index_to_show_=index_to_show
             )
