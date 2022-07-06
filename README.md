@@ -1,5 +1,11 @@
 # Training data cleaner
 
+A web app for calculating BLEU scores
+
+:warning: **Currently in prototype stage and easily breakable!**
+
+:warning: **Security of host not verified. Do not upload proprietary data!**
+
 ## The problem
 
 Translation memories are an excellent source of training data for machine translation (MT) models.
